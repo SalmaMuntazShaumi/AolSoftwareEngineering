@@ -25,6 +25,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar:AppBar(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,

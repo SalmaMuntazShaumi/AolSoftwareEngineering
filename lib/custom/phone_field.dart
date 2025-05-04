@@ -47,7 +47,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
         const SizedBox(width: 8),
         // Input nomor telepon
         Expanded(
-          child: TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Masukan nomor telepon'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14))),
+          child: TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Masukan nomor telepon'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14)), keyboardType: TextInputType.number,),
         ),
       ],
     );

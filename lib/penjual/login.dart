@@ -25,8 +25,11 @@ class _LoginPagePenjualState extends State<LoginPagePenjual> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 0,
         ),
         body: SafeArea(
           child: ListView(
