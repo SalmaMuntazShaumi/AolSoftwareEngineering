@@ -1,3 +1,4 @@
+import 'package:compwaste/Custom/bottom_navbar.dart';
 import 'package:compwaste/role_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -24,8 +25,11 @@ class _LoginPagePembeliState extends State<LoginPagePembeli> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
-          automaticallyImplyLeading: true,
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          elevation: 0,
         ),
         body: SafeArea(
           child: ListView(
@@ -40,7 +44,13 @@ class _LoginPagePembeliState extends State<LoginPagePembeli> {
               TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Kata Sandi'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14)), keyboardType: TextInputType.visiblePassword),
               SizedBox(height: 50),
               GestureDetector(
-                onTap: (){},
+                onTap: (){
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => CustomBottomNavBarPage()),
+                        (Route<dynamic> route) => false,
+                  );
+                },
                 child: Container(
                   decoration: BoxDecoration(color: Color(0xff1C1678), borderRadius: BorderRadius.circular(100)),
                     height: 50,

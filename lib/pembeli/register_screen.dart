@@ -25,7 +25,10 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
         }
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           elevation: 0,
         ),
         body: SafeArea(

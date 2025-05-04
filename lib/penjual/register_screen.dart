@@ -4,14 +4,14 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class RegisterPagePembeli extends StatefulWidget {
-  const RegisterPagePembeli({super.key});
+class RegisterPagePenjual extends StatefulWidget {
+  const RegisterPagePenjual({super.key});
 
   @override
-  State<RegisterPagePembeli> createState() => _RegisterPagePembeliState();
+  State<RegisterPagePenjual> createState() => _RegisterPagePenjualState();
 }
 
-class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
+class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -20,12 +20,15 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
         if (!didPop) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => LoginPagePembeli()),
+            MaterialPageRoute(builder: (context) => LoginPagePenjual()),
           );
         }
       },
       child: Scaffold(
-        appBar: AppBar(
+        backgroundColor: Colors.white,
+        appBar:AppBar(
+          backgroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           elevation: 0,
         ),
         body: SafeArea(
@@ -37,7 +40,7 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
                 SizedBox(
                     width: 200,
                     child: Text(
-                      'Daftar Sebagai Pembeli!',
+                      'Daftar Sebagai Penjual!',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
                     )),
                 const SizedBox(height: 20),
@@ -133,7 +136,7 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
                           ..onTap = () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => LoginPagePembeli(),
+                                builder: (context) => LoginPagePenjual(),
                               ),
                             );
                           },

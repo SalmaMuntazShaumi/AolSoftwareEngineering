@@ -1,4 +1,5 @@
-import 'package:compwaste/pembeli/Pages/login.dart';
+import 'package:compwaste/pembeli/login.dart';
+import 'package:compwaste/penjual/login.dart';
 import 'package:flutter/material.dart';
 
 class RolePage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _RolePageState extends State<RolePage> {
                   width: 230,
                   child: ElevatedButton(onPressed: () {
                     setState(() {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPagePembeli()));
                     });
                   }, child: Text('Pembeli'), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xff7BC9FF)), foregroundColor: MaterialStateProperty.all(Colors.black)), ),
                 ),
@@ -36,6 +37,9 @@ class _RolePageState extends State<RolePage> {
                 SizedBox(
                   width: 230,
                   child: ElevatedButton(onPressed: () {
+                    setState(() {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPagePenjual()));
+                    });
                   }, child: const Text('Penjual'), style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Color(0xff7BC9FF)), foregroundColor: MaterialStateProperty.all(Colors.black)),),
                 )
               ],
