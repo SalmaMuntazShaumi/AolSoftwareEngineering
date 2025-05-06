@@ -1,4 +1,5 @@
 import 'package:compwaste/Custom/bottom_navbar.dart';
+import 'package:compwaste/controller.dart';
 import 'package:compwaste/role_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,9 @@ class LoginPagePembeli extends StatefulWidget {
 }
 
 class _LoginPagePembeliState extends State<LoginPagePembeli> {
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _passwordController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -39,12 +43,13 @@ class _LoginPagePembeliState extends State<LoginPagePembeli> {
               SizedBox(height: 15),
               Text('Masuk untuk memulai transaksi ramah lingkungan', style: TextStyle(color: Colors.black.withOpacity(0.50), fontSize:  14)),
               SizedBox(height: 60),
-              TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Email'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14))),
+              TextField(controller:_emailController, decoration: InputDecoration(alignLabelWithHint: true, label: Text('Email'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14))),
               SizedBox(height: 15),
-              TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Kata Sandi'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14)), keyboardType: TextInputType.visiblePassword),
+              TextField(controller:_passwordController, decoration: InputDecoration(alignLabelWithHint: true, label: Text('Kata Sandi'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14)), keyboardType: TextInputType.visiblePassword),
               SizedBox(height: 50),
               GestureDetector(
                 onTap: (){
+                  signIn(_emailController.text, _passwordController.text);
                   Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => CustomBottomNavBarPage()),
