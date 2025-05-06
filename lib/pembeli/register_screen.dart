@@ -1,4 +1,5 @@
 import 'package:compwaste/Custom/phone_field.dart';
+import 'package:compwaste/controller.dart';
 import 'login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,9 @@ class RegisterPagePembeli extends StatefulWidget {
 }
 
 class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _passwordController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -72,6 +76,7 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Email'),
@@ -83,6 +88,7 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
                 PhoneNumberField(),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Kata Sandi'),
@@ -101,7 +107,11 @@ class _RegisterPagePembeliState extends State<RegisterPagePembeli> {
                 ),
                 const SizedBox(height: 50),
                 GestureDetector(
-                  onTap: () {},
+                  onTap: () {
+                    setState(() {
+                      signUp(_emailController.text, _passwordController.text);
+                    });
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xff1C1678),
