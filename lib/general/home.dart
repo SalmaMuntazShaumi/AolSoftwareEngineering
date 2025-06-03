@@ -1,3 +1,5 @@
+import 'package:compwaste/custom/article_card.dart';
+import 'package:compwaste/custom/emission_card.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -5,8 +7,41 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final List<Map<String, dynamic>> categories = [
+      {
+        'label': 'Produk roti',
+        'asset': 'assets/bakery.png',
+        'color': Color(0xff7BC9FF),
+      },
+      {
+        'label': 'Lemak',
+        'asset': 'assets/oil.png',
+        'color': Color(0xff1C1678),
+      },
+      {
+        'label': 'Nasi',
+        'asset': 'assets/rice.png',
+        'color': Color(0xffA3FFD6),
+      },
+      {
+        'label': 'Daging',
+        'asset': 'assets/beef.png',
+        'color': Color(0xff8576FF),
+      },
+      {
+        'label': 'Buah dan Sayur',
+        'asset': 'assets/vegetables.png',
+        'color': Color(0xffA3FFD6),
+      },
+      {
+        'label': 'Tulang',
+        'asset': 'assets/zeroa.png',
+        'color': Color(0xff7BC9FF),
+      },
+    ];
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white54,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
@@ -35,45 +70,8 @@ class HomePage extends StatelessWidget {
                   )
                 ],
               ),
-              const SizedBox(height: 20),
-
-              // Card Saldo
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Color(0xffB7E2FF).withOpacity(0.30),
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.black.withOpacity(0.20))
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text("Rutinitas",
-                        style: TextStyle(
-                            fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black38)),
-                    const Text("RP3,546.819.61",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 12),
-                    // Container(
-                    //   height: 12,
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.circular(20),
-                    //     gradient: const LinearGradient(
-                    //       colors: [
-                    //         Color(0xff1E003E),
-                    //         Color(0xff3D1D9B),
-                    //         Color(0xff6797D4),
-                    //         Color(0xffA1F3EF)
-                    //       ],
-                    //     ),
-                    //   ),
-                    // )
-                  ],
-                ),
-              ),
-
+              const SizedBox(height: 32),
+              EmissionCard(),
               const SizedBox(height: 30),
               const Text("Product Tersedia",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
@@ -81,18 +79,20 @@ class HomePage extends StatelessWidget {
 
               SizedBox(
                 height: 210,
-                child: GridView(
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                    ),
-                  children: [
-                    _buildCategory("Produk roti", "🍞", Colors.lightBlue),
-                    _buildCategory("Lemak", "🧈", Colors.deepPurpleAccent),
-                    _buildCategory("Nasi", "🍚", Colors.greenAccent),
-                    _buildCategory("Daging", "🥩", Colors.purple),
-                    _buildCategory("Buah dan Sayur", "🥦", Colors.green),
-                    _buildCategory("Tulang", "🦴", Colors.lightBlue),
-                  ],
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                  ),
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: categories.length,
+                  itemBuilder: (context, index) {
+                    final category = categories[index];
+                    return _buildCategory(
+                      category['label'],
+                      category['asset'],
+                      category['color'],
+                    );
+                  },
                 ),
               ),
 
@@ -102,7 +102,7 @@ class HomePage extends StatelessWidget {
                 children: const [
                   Text("Berita Terbaru",
                       style:
-                      TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                   Icon(Icons.more_horiz)
                 ],
               ),
@@ -113,14 +113,21 @@ class HomePage extends StatelessWidget {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    _buildNewsCard(
-                        "Menghitung Dampak Lingkungan dari sampah ...",
-                        "14 Januari 2025",
-                        "By Yanita Patiella"),
-                    _buildNewsCard(
-                        "Pabrik di Jepang daur ulang limbah makanan ...",
-                        "28 September 2024",
-                        "By Rachel Nuver"),
+                    ArticleCard(
+                        url: "https://www.example.com/article1",
+                        imageUrl: "https://assetd.kompas.id/VwSHT6YNzpzvmbQaHCBgQKdpIfo=/fit-in/1024x720/filters:format(webp):quality(80)/https://asset.kgnewsroom.com/photo/pre/2022/11/16/6febad8a-a595-4914-91f9-c42a3177a386_jpeg.jpg",
+                        title: "Menghitung Dampak Lingkungan dari sampah ...",
+                        date: "14 Januari 2025",
+                        author: "By Yanita Patiella",
+                        widthSize: 200),
+                    ArticleCard(
+                        url: "https://www.example.com/article2",
+                        imageUrl:
+                            "https://akcdn.detik.net.id/visual/2020/08/10/tempat-pengelolaan-sampah-terpadu-tpst-bantar-gebang-di-bekasi-jawa-barat-senin-10820-cnbc-indonesiatri-susilo-1_169.jpeg?w=900&q=80",
+                        title: "Pabrik di Jepang daur ulang limbah makanan ...",
+                        date: "28 September 2024",
+                        author: "By Rachel Nuver",
+                        widthSize: 200),
                   ],
                 ),
               )
@@ -131,14 +138,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategory(String label, String emoji, Color color) {
+  Widget _buildCategory(String label, String assets, Color color) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         CircleAvatar(
           backgroundColor: color,
           radius: 30,
-          child: Text(emoji, style: const TextStyle(fontSize: 20)),
+          child: Image.asset(assets, height: 32, width: 32, fit: BoxFit.cover),
         ),
         const SizedBox(height: 6),
         SizedBox(
@@ -148,59 +155,6 @@ class HomePage extends StatelessWidget {
               style: const TextStyle(fontSize: 12)),
         )
       ],
-    );
-  }
-
-  Widget _buildNewsCard(String title, String date, String author) {
-    return Container(
-      width: 200,
-      margin: const EdgeInsets.only(right: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius:
-            const BorderRadius.vertical(top: Radius.circular(16)),
-            child: Image.asset(
-              'assets/article_image.png', // Ganti dengaqn gambar asli
-              height: 90,
-              width: 200,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title,
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                    style:
-                    const TextStyle(fontWeight: FontWeight.w600, fontSize: 12)),
-                const SizedBox(height: 6),
-                Text(date,
-                    style: TextStyle(
-                        fontSize: 10, color: Colors.black.withOpacity(0.5))),
-                Text(author,
-                    style: TextStyle(
-                        fontSize: 10, color: Colors.black.withOpacity(0.5))),
-              ],
-            ),
-          )
-        ],
-      ),
     );
   }
 }

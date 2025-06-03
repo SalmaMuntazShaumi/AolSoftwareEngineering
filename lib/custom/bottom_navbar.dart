@@ -1,3 +1,4 @@
+import 'package:compwaste/general/article.dart';
 import 'package:compwaste/general/chat.dart';
 import 'package:compwaste/general/history.dart';
 import 'package:compwaste/general/home.dart';
@@ -14,7 +15,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
 
   final List<Widget> _pages = [
     HomePage(),
-    ProductPage(),
+    ArticlePage(),
     HistoryPage(),
     Chat(),
   ];
@@ -22,9 +23,9 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: null,
       body: _pages[_currentIndex],
 
-      // FAB di tengah
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         backgroundColor: Colors.white,
@@ -34,38 +35,47 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
-      // BottomAppBar dengan notch
-      bottomNavigationBar: BottomAppBar(
-        shape: CircularNotchedRectangle(),
-        // notchMargin: 8,
-        elevation: 10,
-        color: Colors.white,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Kiri
-            Row(
-              children: [
-                _buildTabItem(icon: Icons.home, index: 0),
-                SizedBox(width: 24),
-                _buildTabItem(icon: Icons.article, index: 1),
-              ],
+      // Inside your build method, replace the bottomNavigationBar:
+      bottomNavigationBar: ClipRRect(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        child: BottomAppBar(
+          shape: AutomaticNotchedShape(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+              side: BorderSide(color: Colors.transparent, width: 1),
             ),
-            // Kanan
-            Row(
-              children: [
-                _buildTabItem(icon: Icons.history, index: 2),
-                SizedBox(width: 24),
-                _buildTabItem(icon: Icons.chat, index: 3),
-              ],
+            StadiumBorder(
+              side: BorderSide(color: Colors.transparent, width: 1),
             ),
-          ],
+          ),
+          height: 70,
+          notchMargin: 5,
+          color: Colors.white,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  _buildTabItem(icon: 'assets/home.png', index: 0),
+                  SizedBox(width: 24),
+                  _buildTabItem(icon: 'assets/article.png', index: 1),
+                ],
+              ),
+              Row(
+                children: [
+                  _buildTabItem(icon: 'assets/history.png', index: 2),
+                  SizedBox(width: 24),
+                  _buildTabItem(icon: 'assets/chat.png', index: 3),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildTabItem({required IconData icon, required int index}) {
+  Widget _buildTabItem({required String icon, required int index}) {
     final isSelected = _currentIndex == index;
     return GestureDetector(
       onTap: () {
@@ -81,11 +91,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         )
             : null,
         padding: EdgeInsets.all(10),
-        child: Icon(
-          size: 26,
-          icon,
-          color: isSelected ? Colors.white : Colors.black,
-        ),
+        child: Image.asset(icon, height: 26, color: isSelected ? Colors.white : Colors.black),
       ),
     );
   }
