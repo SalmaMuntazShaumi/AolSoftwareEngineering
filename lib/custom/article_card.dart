@@ -1,17 +1,18 @@
+import 'package:compwaste/general/home.dart';
 import 'package:flutter/material.dart';
 
 class ArticleCard extends StatefulWidget {
   final String title, date, author, url, imageUrl;
-  final double widthSize;
+  final bool isHome;
 
   const ArticleCard({
     super.key,
     required this.title,
     required this.date,
     required this.author,
-    required this.widthSize,
     required this.url,
     required this.imageUrl,
+    this.isHome = true,
   });
 
   @override
@@ -19,10 +20,11 @@ class ArticleCard extends StatefulWidget {
 }
 
 class _ArticleCardState extends State<ArticleCard> {
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: widget.widthSize,
+      width: widget.isHome ? 250 : double.infinity,
       margin: const EdgeInsets.only(right: 12),
       decoration: BoxDecoration(
         color: Colors.white,
