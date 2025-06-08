@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:compwaste/custom/article_card.dart';
+import 'package:compwaste/custom/searchBar.dart';
 import 'package:compwaste/helper/screen_utils.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +23,7 @@ class _ArticlePageState extends State<ArticlePage> {
         backgroundColor: Colors.white54,
         body: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -31,17 +32,7 @@ class _ArticlePageState extends State<ArticlePage> {
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
                 SizedBox(height: 10),
-                TextField(
-                  decoration: InputDecoration(
-                    hintText: 'Cari',
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16),
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    suffixIcon: Icon(Icons.search),
-                  ),
-                ),
+                Searchbar(),
                 SizedBox(height: 10),
                 TabBar(
                   labelColor: Colors.black,
@@ -58,7 +49,6 @@ class _ArticlePageState extends State<ArticlePage> {
                 Expanded(
                   child: TabBarView(
                     children: [
-                      // For You tab: Firestore articles
                       StreamBuilder<QuerySnapshot>(
                         stream: FirebaseFirestore.instance.collection('articles').snapshots(),
                         builder: (context, snapshot) {
@@ -74,14 +64,14 @@ class _ArticlePageState extends State<ArticlePage> {
                             itemBuilder: (context, index) {
                               final data = docs[index].data() as Map<String, dynamic>;
                               return Padding(
-                                padding: const EdgeInsets.only(bottom: 16.0),
+                                padding: const EdgeInsets.only(bottom: 16.0, left: 16),
                                 child: ArticleCard(
+                                  isHome: false,
                                   imageUrl: data['url_image'] ?? 'https://inspektorat.palembang.go.id/assets/img/no-image.png',
                                   url: data['url_article'] ?? '',
                                   title: data['title'] ?? '',
                                   date: data['publish_year'] ?? '',
                                   author: data['author'] ?? '',
-                                  widthSize: MediaQuery.of(context).size.width,
                                 ),
                               );
                             },

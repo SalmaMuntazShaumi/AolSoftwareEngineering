@@ -119,7 +119,7 @@ class HomePage extends StatelessWidget {
                         title: "Menghitung Dampak Lingkungan dari sampah ...",
                         date: "14 Januari 2025",
                         author: "By Yanita Patiella",
-                        widthSize: 200),
+                        isHome: true),
                     ArticleCard(
                         url: "https://www.example.com/article2",
                         imageUrl:
@@ -127,7 +127,7 @@ class HomePage extends StatelessWidget {
                         title: "Pabrik di Jepang daur ulang limbah makanan ...",
                         date: "28 September 2024",
                         author: "By Rachel Nuver",
-                        widthSize: 200),
+                        isHome: true),
                   ],
                 ),
               )

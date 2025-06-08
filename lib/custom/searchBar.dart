@@ -16,58 +16,17 @@ class _SearchbarState extends State<Searchbar> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(top: 0 , bottom: 20),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        color: Color(0xff07070B).withOpacity(0.4),
-      ),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0)
-        ),
-        margin: EdgeInsets.symmetric(vertical: 15 , horizontal: 15),
-        child: Row(
-          children: [
-            Container(
-              height: ScreenUtils.getDesignHeight(81),
-              width: ScreenUtils.getDesignWidth(60),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(5.0),
-                child: CachedNetworkImage(
-                  imageUrl: widget.imageUrl!,
-                  fit: BoxFit.fill,
-                ),
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.only(left: 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: ScreenUtils.getDesignWidth(180),
-                    child: Text(widget.title! , style: TextStyle(fontSize: 18 , fontWeight: FontWeight.bold , color: Colors.white),),),
-                  Container(
-                    width: ScreenUtils.getDesignWidth(80),
-                    child: Text(widget.releaseDate == null ? 'Not Mentioned' : widget.releaseDate! , style: TextStyle(fontSize: 18  , fontWeight: FontWeight.bold , color: Colors.red),),),
-                ],
-              ),
-            ),
-            Spacer(),
-            Container(
-              height: ScreenUtils.getDesignHeight(20),
-              width: ScreenUtils.getDesignWidth(20),
-              decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Colors.red
-              ),
-              child: Icon(Icons.arrow_forward_ios_rounded , color: Colors.white , size: 15,),
-            ),
-          ],
+    return SizedBox(
+      height: 45,
+      child: TextField(
+        decoration: InputDecoration(
+          contentPadding: EdgeInsets.symmetric(horizontal: 16),
+          hintText: 'Cari',
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey),
+            borderRadius: BorderRadius.circular(100),
+          ),
+          suffixIcon: Container(margin: EdgeInsets.only(right: 16), child: Image.asset('assets/loupe.png', width: 12, height: 12)),
         ),
       ),
     );
