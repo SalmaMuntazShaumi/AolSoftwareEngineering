@@ -3,6 +3,7 @@ import 'dart:ffi';
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
 import 'package:compwaste/general/products.dart';
+import 'package:compwaste/general/profile.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -58,17 +59,25 @@ class HomePage extends StatelessWidget {
               // Top bar
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: const [
+                children: [
                   Row(
                     children: [
-                      Icon(Icons.person_outline),
-                      SizedBox(width: 8),
-                      Text("Hi, Gina!",
+                      IconButton(
+                        icon: Image.asset('assets/profile_icon.png', height: 24, width: 24),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const ProfilePage()),
+                          );
+                        },
+                      ),
+                      const SizedBox(width: 8),
+                      const Text("Hi, Gina!",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500))
                     ],
                   ),
-                  Row(
+                  const Row(
                     children: [
                       Icon(Icons.search),
                       SizedBox(width: 16),
