@@ -2,6 +2,7 @@ import 'dart:ffi';
 
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
+import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/products.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:flutter/material.dart';
@@ -77,11 +78,16 @@ class HomePage extends StatelessWidget {
                               fontSize: 16, fontWeight: FontWeight.w500))
                     ],
                   ),
-                  const Row(
+                  Row(
                     children: [
                       Icon(Icons.search),
                       SizedBox(width: 16),
-                      Icon(Icons.notifications_outlined)
+                      IconButton(icon: Icon(Icons.notifications_outlined), onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => const NotificationPage()),
+                        );
+                      },)
                     ],
                   )
                 ],
