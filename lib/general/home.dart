@@ -1,9 +1,16 @@
+import 'dart:ffi';
+
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
+import 'package:compwaste/general/products.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final void Function(String categoryLabel)? onCategoryTap;
+
+  const HomePage({super.key, this.onCategoryTap});
+
+  BuildContext? get context => null;
 
   @override
   Widget build(BuildContext context) {
@@ -78,7 +85,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 14),
 
               SizedBox(
-                height: 210,
+                height: 250,
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
@@ -88,9 +95,11 @@ class HomePage extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final category = categories[index];
                     return _buildCategory(
+                      context,
                       category['label'],
                       category['asset'],
                       category['color'],
+                      category['label']
                     );
                   },
                 ),
@@ -138,23 +147,29 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildCategory(String label, String assets, Color color) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        CircleAvatar(
-          backgroundColor: color,
-          radius: 30,
-          child: Image.asset(assets, height: 32, width: 32, fit: BoxFit.cover),
-        ),
-        const SizedBox(height: 6),
-        SizedBox(
-          width: 70,
-          child: Text(label,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12)),
-        )
-      ],
+  Widget _buildCategory(BuildContext context, String label, String assets, Color color, String categoryLabel) {
+    return GestureDetector(
+      onTap: () {
+        if (onCategoryTap != null) {
+          onCategoryTap!(categoryLabel);
+        }
+      },
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          CircleAvatar(
+              backgroundColor: color,
+              radius: 40,
+              child: Image.asset(assets, height: 40, width: 40,)
+          ),
+          const SizedBox(height: 6),
+          Expanded(
+            child: Text(label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 14)),
+          )
+        ],
+      ),
     );
   }
 }

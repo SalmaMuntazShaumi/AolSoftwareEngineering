@@ -12,20 +12,39 @@ class CustomBottomNavBarPage extends StatefulWidget {
 
 class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
   int _currentIndex = 0;
-
-  final List<Widget> _pages = [
-    HomePage(),
-    ArticlePage(),
-    HistoryPage(),
-    Chat(),
-  ];
+  String? _selectedCategoryLabel;
 
   @override
   Widget build(BuildContext context) {
+    Widget body;
+    if (_currentIndex == 0 && _selectedCategoryLabel == null) {
+      body = HomePage(
+        onCategoryTap: (categoryLabel) {
+          setState(() {
+            _selectedCategoryLabel = categoryLabel;
+          });
+        },
+      );
+    } else if (_currentIndex == 0 && _selectedCategoryLabel != null) {
+      body = ProductPage(
+        categoryLabel: _selectedCategoryLabel!,
+        onBack: () {
+          setState(() {
+            _selectedCategoryLabel = null;
+          });
+        },
+      );
+    } else if (_currentIndex == 1) {
+      body = ArticlePage();
+    } else if (_currentIndex == 2) {
+      body = HistoryPage();
+    } else {
+      body = Chat();
+    }
+
     return Scaffold(
       backgroundColor: null,
-      body: _pages[_currentIndex],
-
+      body: body,
       floatingActionButton: FloatingActionButton(
         onPressed: () {},
         backgroundColor: Colors.white,
@@ -34,8 +53,6 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         child: Icon(Icons.shopping_cart, color: Colors.black),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-
-      // Inside your build method, replace the bottomNavigationBar:
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         child: BottomAppBar(
@@ -81,6 +98,11 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
       onTap: () {
         setState(() {
           _currentIndex = index;
+          if (index == 0) {
+            _selectedCategoryLabel = null; // Always go back to HomePage
+          } else {
+            _selectedCategoryLabel = null;
+          }
         });
       },
       child: Container(
