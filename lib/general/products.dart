@@ -81,7 +81,18 @@ class _ProductPageState extends State<ProductPage> {
                     name: product['name'],
                     category: product['category'],
                     price: product['price'],
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        '/productDetail',
+                        arguments: {
+                          'name': product['name'],
+                          'imagePath': product['imagePath'],
+                          'price': product['price'],
+                          'category': product['category'],
+                        },
+                      );
+                    },
                     onAddToCart: () {},
                   );
                 },

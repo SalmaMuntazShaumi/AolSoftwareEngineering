@@ -1,4 +1,7 @@
 import 'package:compwaste/firebase_options.dart';
+import 'package:compwaste/general/detail_products.dart';
+import 'package:compwaste/general/notif.dart';
+import 'package:compwaste/general/profile.dart';
 import 'package:compwaste/general/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -27,6 +30,11 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       home: SplashScreen(),
+      routes: {
+        '/nofication': (context) => const NotificationPage(),
+        '/profile': (context) => const ProfilePage(),
+        '/productDetail': (context) => const DetailProducts(),
+      },
     );
   }
 }
