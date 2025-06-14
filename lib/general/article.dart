@@ -65,13 +65,28 @@ class _ArticlePageState extends State<ArticlePage> {
                               final data = docs[index].data() as Map<String, dynamic>;
                               return Padding(
                                 padding: const EdgeInsets.only(bottom: 16.0, left: 16),
-                                child: ArticleCard(
-                                  isHome: false,
-                                  imageUrl: data['url_image'] ?? 'https://inspektorat.palembang.go.id/assets/img/no-image.png',
-                                  url: data['url_article'] ?? '',
-                                  title: data['title'] ?? '',
-                                  date: data['publish_year'] ?? '',
-                                  author: data['author'] ?? '',
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.pushNamed(
+                                      context,
+                                      '/detailArticle',
+                                      arguments: {
+                                        'title': data['title'] ?? 'No Title',
+                                        'imagePath': data['url_image'] ?? 'https://inspektorat.palembang.go.id/assets/img/no-image.png',
+                                        'author': data['author'] ?? 'Unknown',
+                                        'date': data['publish_year'] ?? 'Unknown',
+                                        'content': 'Full article content here...',
+                                      },
+                                    );
+                                  },
+                                  child: ArticleCard(
+                                    isHome: false,
+                                    imageUrl: data['url_image'] ?? 'https://inspektorat.palembang.go.id/assets/img/no-image.png',
+                                    url: data['url_article'] ?? '',
+                                    title: data['title'] ?? '',
+                                    date: data['publish_year'] ?? '',
+                                    author: data['author'] ?? '',
+                                  ),
                                 ),
                               );
                             },

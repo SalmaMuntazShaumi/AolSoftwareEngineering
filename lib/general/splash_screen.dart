@@ -1,4 +1,6 @@
 import 'package:compwaste/Custom/bottom_navbar.dart';
+import 'package:compwaste/pembeli/login.dart';
+import 'package:compwaste/role_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -21,7 +23,7 @@ class _SplashScreenState extends State<SplashScreen> {
       });
     });
     Timer(const Duration(seconds: 2), () {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => CustomBottomNavBarPage()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => RolePage()));
     });
   }
 

@@ -1,4 +1,5 @@
 import 'package:compwaste/firebase_options.dart';
+import 'package:compwaste/general/detail_article.dart';
 import 'package:compwaste/general/detail_products.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/nofication': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
         '/productDetail': (context) => const DetailProducts(),
+        '/detailArticle': (context) => const DetailArticlePage(),
       },
     );
   }
