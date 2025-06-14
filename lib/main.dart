@@ -5,15 +5,13 @@ import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:compwaste/general/splash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'package:flutter/material.dart';
-
 import 'Custom/bottom_navbar.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
+      options: DefaultFirebaseOptions.currentPlatform
   );
   runApp(const MyApp());
 }
@@ -32,10 +30,18 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashScreen(),
       routes: {
-        '/nofication': (context) => const NotificationPage(),
+        '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
         '/productDetail': (context) => const DetailProducts(),
-        '/detailArticle': (context) => const DetailArticlePage(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == '/detailArticle') {
+          final args = settings.arguments as Map<String, dynamic>? ?? {};
+          return MaterialPageRoute(
+            builder: (context) => DetailArticlePage(article: args),
+          );
+        }
+        return null; // fallback to routes table
       },
     );
   }

@@ -5,7 +5,8 @@ import 'package:compwaste/helper/screen_utils.dart';
 import 'package:flutter/material.dart';
 
 class ArticlePage extends StatefulWidget {
-  const ArticlePage({super.key});
+  final void Function(Map<String, dynamic> article)? onArticleTap;
+  const ArticlePage({super.key, this.onArticleTap});
 
   @override
   State<ArticlePage> createState() => _ArticlePageState();
@@ -67,17 +68,15 @@ class _ArticlePageState extends State<ArticlePage> {
                                 padding: const EdgeInsets.only(bottom: 16.0, left: 16),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.pushNamed(
-                                      context,
-                                      '/detailArticle',
-                                      arguments: {
+                                    if (widget.onArticleTap != null) {
+                                      widget.onArticleTap!({
                                         'title': data['title'] ?? 'No Title',
                                         'imagePath': data['url_image'] ?? 'https://inspektorat.palembang.go.id/assets/img/no-image.png',
                                         'author': data['author'] ?? 'Unknown',
-                                        'date': data['publish_year'] ?? 'Unknown',
-                                        'content': 'Full article content here...',
-                                      },
-                                    );
+                                        'publish_year': data['publish_year'] ?? 'Unknown',
+                                        'desc': data['desc'] ?? 'No content available.',
+                                      });
+                                    }
                                   },
                                   child: ArticleCard(
                                     isHome: false,

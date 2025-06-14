@@ -42,64 +42,62 @@ class _ProductPageState extends State<ProductPage> {
   Widget build(BuildContext context) {
     final products = productsByCategory[widget.categoryLabel] ?? [];
 
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  Expanded(flex: 4, child: Searchbar()),
-                  Expanded(
-                    flex: 1,
-                    child: IconButton(
-                      icon: const Icon(Icons.filter_list),
-                      onPressed: () {},
-                    ),
-                  )
-                ],
-              ),
+    return SafeArea(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Row(
+              children: [
+                Expanded(flex: 4, child: Searchbar()),
+                Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    icon: const Icon(Icons.filter_list),
+                    onPressed: () {},
+                  ),
+                )
+              ],
             ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: products.isEmpty
-                  ? const Center(child: Text('No products found.'))
-                  : GridView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  childAspectRatio: 3 / 4,
-                ),
-                itemCount: products.length,
-                itemBuilder: (context, index) {
-                  final product = products[index];
-                  return ProductCard(
-                    imagePath: product['imagePath'],
-                    name: product['name'],
-                    category: product['category'],
-                    price: product['price'],
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        '/productDetail',
-                        arguments: {
-                          'name': product['name'],
-                          'imagePath': product['imagePath'],
-                          'price': product['price'],
-                          'category': product['category'],
-                        },
-                      );
-                    },
-                    onAddToCart: () {},
-                  );
-                },
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: products.isEmpty
+                ? const Center(child: Text('No products found.'))
+                : GridView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 3 / 4,
               ),
+              itemCount: products.length,
+              itemBuilder: (context, index) {
+                final product = products[index];
+                return ProductCard(
+                  imagePath: product['imagePath'],
+                  name: product['name'],
+                  category: product['category'],
+                  price: product['price'],
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      '/productDetail',
+                      arguments: {
+                        'name': product['name'],
+                        'imagePath': product['imagePath'],
+                        'price': product['price'],
+                        'category': product['category'],
+                      },
+                    );
+                  },
+                  onAddToCart: () {},
+                );
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
