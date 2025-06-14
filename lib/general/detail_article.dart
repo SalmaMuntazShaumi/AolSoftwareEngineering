@@ -1,94 +1,95 @@
 import 'package:flutter/material.dart';
 
 class DetailArticlePage extends StatelessWidget {
-  const DetailArticlePage({super.key});
+  final Map<String, dynamic> article;
+  final VoidCallback? onBack;
+  const DetailArticlePage({super.key, required this.article, this.onBack});
 
   @override
   Widget build(BuildContext context) {
-    final article = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>? ?? {};
-
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(context),
-            _buildArticleImage(article['imagePath']),
-            Expanded(child: _buildArticleDetails(article)),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: const Color(0xFF2D1E70),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
+    return SafeArea(
+      child: Stack(
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.white),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          const SizedBox(width: 12),
-          const Text(
-            "Detail Artikel",
-            style: TextStyle(color: Colors.white, fontSize: 18),
-          ),
-          const Spacer(),
+          _buildArticleImage(article['imagePath'], article),
+          if (onBack != null)
+            Positioned(
+              top: 8,
+              left: 8,
+              child: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: onBack,
+              ),
+            ),
+          _buildArticleDetailsOverlay(context, article),
         ],
       ),
     );
   }
 
-  Widget _buildArticleImage(String? imagePath) {
-    return imagePath != null
-        ? ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: Image.network(
-        imagePath,
-        height: 180,
+  Widget _buildArticleImage(String? imagePath, Map<String, dynamic> article) {
+    return Image.network(
+      imagePath ?? '',
+      height: double.infinity,
+      width: double.infinity,
+      fit: BoxFit.cover,
+      errorBuilder: (context, error, stackTrace) => Container(
+        color: Colors.grey[300],
+        height: double.infinity,
         width: double.infinity,
-        fit: BoxFit.cover,
       ),
-    )
-        : const SizedBox(height: 16);
+    );
   }
 
-  Widget _buildArticleDetails(Map<String, dynamic> article) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: ListView(
-        children: [
-          Text(
-            article['title'] ?? 'No Title',
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          ),
-          const SizedBox(height: 8),
-          Row(
+  Widget _buildArticleDetailsOverlay(BuildContext context, Map<String, dynamic> article) {
+    return Positioned(
+      left: 0,
+      right: 0,
+      bottom: 0,
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+        ),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.95),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
+              Text(
+                article['title'] ?? 'No Title',
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                article['publish_year'] ?? '',
+                style: const TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFF2D1E70),
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 child: Text(
                   article['author'] ?? 'Unknown Author',
-                  style: const TextStyle(fontSize: 14, color: Colors.grey),
+                  style: const TextStyle(fontSize: 14, color: Colors.white),
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                 ),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(height: 16),
               Text(
-                article['date'] ?? '',
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                article['desc'] ?? 'No content available.',
+                textAlign: TextAlign.justify,
+                style: const TextStyle(fontSize: 16),
               ),
             ],
           ),
-          const Divider(height: 24),
-          Text(
-            article['content'] ?? 'No content available.',
-            style: const TextStyle(fontSize: 16),
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:compwaste/general/article.dart';
 import 'package:compwaste/general/chat.dart';
+import 'package:compwaste/general/detail_article.dart';
 import 'package:compwaste/general/history.dart';
 import 'package:compwaste/general/home.dart';
 import 'package:compwaste/general/products.dart';
@@ -13,6 +14,7 @@ class CustomBottomNavBarPage extends StatefulWidget {
 class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
   int _currentIndex = 0;
   String? _selectedCategoryLabel;
+  Map<String, dynamic>? _selectedArticle;
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +36,23 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
           });
         },
       );
-    } else if (_currentIndex == 1) {
-      body = ArticlePage();
+    } else if (_currentIndex == 1 && _selectedArticle == null) {
+      body = ArticlePage(
+        onArticleTap: (article) {
+          setState(() {
+            _selectedArticle = article;
+          });
+        },
+      );
+    } else if (_currentIndex == 1 && _selectedArticle != null) {
+      body = DetailArticlePage(
+        article: _selectedArticle!,
+        onBack: () {
+          setState(() {
+            _selectedArticle = null;
+          });
+        },
+      );
     } else if (_currentIndex == 2) {
       body = HistoryPage();
     } else {
@@ -99,7 +116,9 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         setState(() {
           _currentIndex = index;
           if (index == 0) {
-            _selectedCategoryLabel = null; // Always go back to HomePage
+            _selectedCategoryLabel = null;
+          } else if (index == 1) {
+            _selectedArticle = null;
           } else {
             _selectedCategoryLabel = null;
           }
