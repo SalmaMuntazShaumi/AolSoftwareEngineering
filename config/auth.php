@@ -35,16 +35,35 @@ return [
     |
     */
 
-    'guards' => [
-        // 'web' => [
-        //     'driver' => 'session',
-        //     'provider' => 'users',
-        // ],
-        'api' => [
+ 'guards' => [
+    'web' => [
+        'driver' => 'session',
+        'provider' => 'users',
+    ],
+
+    'user-api' => [
         'driver' => 'jwt',
         'provider' => 'users',
-        ],
     ],
+
+    'penjual-api' => [
+        'driver' => 'sanctum',
+        'provider' => 'penjuals',
+    ],
+],
+
+'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+    ],
+
+    'penjuals' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Penjual::class,
+    ],
+],
+
 
     /*
     |--------------------------------------------------------------------------

@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthPenjualController;
+use App\Http\Controllers\TokoController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -49,5 +51,9 @@ Route::group([
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('logout', [AuthPenjualController::class, 'logout']);
         });
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('/toko', [TokoController::class, 'store']);
+        });
+
     });
 });
