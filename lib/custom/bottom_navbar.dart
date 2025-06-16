@@ -4,6 +4,7 @@ import 'package:compwaste/general/detail_article.dart';
 import 'package:compwaste/general/history.dart';
 import 'package:compwaste/general/home.dart';
 import 'package:compwaste/general/products.dart';
+import 'package:compwaste/pembeli/HistoryDetail.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBarPage extends StatefulWidget {
@@ -14,6 +15,7 @@ class CustomBottomNavBarPage extends StatefulWidget {
 class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
   int _currentIndex = 0;
   String? _selectedCategoryLabel;
+  Map<String, dynamic>? _selectedHistoryDetail;
   Map<String, dynamic>? _selectedArticle;
 
   @override
@@ -53,8 +55,22 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
           });
         },
       );
+    } else if (_currentIndex == 2 && _selectedHistoryDetail != null) {
+      body = HistoryDetail(
+        onBack: () {
+          setState(() {
+            _selectedHistoryDetail = null;
+          });
+        },
+      );
     } else if (_currentIndex == 2) {
-      body = HistoryPage();
+      body = HistoryPage(
+        onHistoryTap: (history) {
+          setState(() {
+            _selectedHistoryDetail = history;
+          });
+        },
+      );
     } else {
       body = Chat();
     }
@@ -119,6 +135,8 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
             _selectedCategoryLabel = null;
           } else if (index == 1) {
             _selectedArticle = null;
+          } else if(index == 2) {
+            _selectedHistoryDetail = null;
           } else {
             _selectedCategoryLabel = null;
           }

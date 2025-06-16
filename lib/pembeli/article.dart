@@ -1,3 +1,4 @@
+// lib/general/article.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/searchBar.dart';

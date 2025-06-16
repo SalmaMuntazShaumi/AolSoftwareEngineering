@@ -4,6 +4,7 @@ import 'package:compwaste/general/detail_products.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:compwaste/general/splash_screen.dart';
+import 'package:compwaste/pembeli/HistoryDetail.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Custom/bottom_navbar.dart';
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
         '/productDetail': (context) => const DetailProducts(),
+        '/history_detail': (context) => const HistoryDetail(),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detailArticle') {
