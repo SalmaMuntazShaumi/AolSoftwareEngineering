@@ -1,18 +1,40 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 class PhoneNumberField extends StatefulWidget {
+  final TextEditingController controller;
+  const PhoneNumberField({super.key, required this.controller});
+
   @override
   _PhoneNumberFieldState createState() => _PhoneNumberFieldState();
 }
 
 class _PhoneNumberFieldState extends State<PhoneNumberField> {
   String selectedCountryCode = '+62';
+  late final TextEditingController _internalController;
+
+  @override
+  void initState() {
+    super.initState();
+    _internalController = TextEditingController();
+    _internalController.addListener(_updateFullPhoneNumber);
+  }
+
+  @override
+  void dispose() {
+    _internalController.removeListener(_updateFullPhoneNumber);
+    _internalController.dispose();
+    super.dispose();
+  }
+
+  void _updateFullPhoneNumber() {
+    widget.controller.text = '$selectedCountryCode${_internalController.text}';
+  }
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        // Kode negara dengan dropdown
         Container(
           padding: const EdgeInsets.symmetric(vertical: 3),
           decoration: BoxDecoration(
@@ -27,7 +49,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
                 value: code,
                 child: Row(
                   children: [
-                    if (code == '+62') // Tampilkan bendera untuk +62
+                    if (code == '+62')
                       const Icon(Icons.flag, size: 16, color: Colors.red),
                     const SizedBox(width: 4),
                     Text(code),
@@ -38,6 +60,7 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
             onChanged: (String? newValue) {
               setState(() {
                 selectedCountryCode = newValue!;
+                _updateFullPhoneNumber();
               });
             },
             underline: const SizedBox(),
@@ -45,9 +68,19 @@ class _PhoneNumberFieldState extends State<PhoneNumberField> {
           ),
         ),
         const SizedBox(width: 8),
-        // Input nomor telepon
         Expanded(
-          child: TextField(decoration: InputDecoration(alignLabelWithHint: true, label: Text('Masukan nomor telepon'), labelStyle: TextStyle(color: Colors.black.withOpacity(0.50), fontSize: 14)), keyboardType: TextInputType.number,),
+          child: TextField(
+            controller: _internalController,
+            decoration: InputDecoration(
+              alignLabelWithHint: true,
+              label: Text('Masukan nomor telepon'),
+              labelStyle: TextStyle(
+                color: Colors.black.withOpacity(0.50),
+                fontSize: 14,
+              ),
+            ),
+            keyboardType: TextInputType.number,
+          ),
         ),
       ],
     );

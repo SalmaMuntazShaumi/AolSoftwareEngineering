@@ -1,10 +1,10 @@
 import 'package:compwaste/firebase_options.dart';
-import 'package:compwaste/general/detail_article.dart';
-import 'package:compwaste/general/detail_products.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:compwaste/general/splash_screen.dart';
 import 'package:compwaste/pembeli/HistoryDetail.dart';
+import 'package:compwaste/pembeli/detail_article.dart';
+import 'package:compwaste/pembeli/detail_products.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Custom/bottom_navbar.dart';

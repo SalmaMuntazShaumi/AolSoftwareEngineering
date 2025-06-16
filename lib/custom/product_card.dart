@@ -4,7 +4,7 @@ class ProductCard extends StatelessWidget {
   final String imagePath;
   final String name;
   final String category;
-  final int price;
+  final String price;
   final VoidCallback? onTap;
   final VoidCallback? onAddToCart;
 
@@ -23,49 +23,53 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
+        // height: 150,
+        width: 156,
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(
-              child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.asset(
-                  imagePath,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+              child: Image.network(
+                imagePath,
+                width: double.infinity,
+                height: 80,
+                fit: BoxFit.cover,
               ),
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     name,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     category,
-                    style: TextStyle(color: Colors.grey[600]),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.grey),
                   ),
-                  const SizedBox(height: 4),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\Rp${price.toStringAsFixed(0)}',
+                        '\Rp$price',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.add_shopping_cart),
+                        icon: const Icon(Icons.add_shopping_cart, size: 20),
                         onPressed: onAddToCart,
                       ),
                     ],
