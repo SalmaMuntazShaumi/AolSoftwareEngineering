@@ -3,7 +3,7 @@ import 'package:compwaste/controller.dart';
 import 'package:compwaste/role_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'register_screen.dart';
+import '../general/register_screen.dart';
 
 class LoginPage extends StatefulWidget {
   final String role;
@@ -69,14 +69,32 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 50),
               GestureDetector(
                 onTap: () async {
-                  await signIn(
-                      _emailController.text, _passwordController.text, widget.role);
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CustomBottomNavBarPage()),
-                        (Route<dynamic> route) => false,
-                  );
+                  try {
+                    await signIn(
+                      _emailController.text,
+                      _passwordController.text,
+                      widget.role,
+                    );
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(builder: (context) => CustomBottomNavBarPage()),
+                          (Route<dynamic> route) => false,
+                    );
+                  } catch (e) {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text('Login Failed'),
+                        content: Text('Email or password is incorrect.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
                 child: Container(
                     decoration: BoxDecoration(

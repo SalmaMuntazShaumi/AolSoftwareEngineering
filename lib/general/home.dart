@@ -1,17 +1,41 @@
-import 'dart:ffi';
-
+// lib/general/home.dart
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   final void Function(String categoryLabel)? onCategoryTap;
 
   const HomePage({super.key, this.onCategoryTap});
 
-  BuildContext? get context => null;
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String? fullName;
+  String? email;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
+      setState(() {
+        fullName = doc.data()?['fullName'] ?? 'User';
+        email = user.email;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,7 +96,7 @@ class HomePage extends StatelessWidget {
                         },
                       ),
                       const SizedBox(width: 8),
-                      const Text("Hi, Gina!",
+                      Text("HI, ${fullName?.toUpperCase() ?? "User"}!",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.w500))
                     ],
@@ -102,19 +126,19 @@ class HomePage extends StatelessWidget {
                 height: 250,
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    mainAxisSpacing: 12
+                      crossAxisCount: 3,
+                      mainAxisSpacing: 12
                   ),
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     final category = categories[index];
                     return _buildCategory(
-                      context,
-                      category['label'],
-                      category['asset'],
-                      category['color'],
-                      category['label']
+                        context,
+                        category['label'],
+                        category['asset'],
+                        category['color'],
+                        category['label']
                     );
                   },
                 ),
@@ -126,7 +150,7 @@ class HomePage extends StatelessWidget {
                 children: const [
                   Text("Berita Terbaru",
                       style:
-                          TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                      TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
                   Icon(Icons.more_horiz)
                 ],
               ),
@@ -147,7 +171,7 @@ class HomePage extends StatelessWidget {
                     ArticleCard(
                         url: "https://www.example.com/article2",
                         imageUrl:
-                            "https://akcdn.detik.net.id/visual/2020/08/10/tempat-pengelolaan-sampah-terpadu-tpst-bantar-gebang-di-bekasi-jawa-barat-senin-10820-cnbc-indonesiatri-susilo-1_169.jpeg?w=900&q=80",
+                        "https://akcdn.detik.net.id/visual/2020/08/10/tempat-pengelolaan-sampah-terpadu-tpst-bantar-gebang-di-bekasi-jawa-barat-senin-10820-cnbc-indonesiatri-susilo-1_169.jpeg?w=900&q=80",
                         title: "Pabrik di Jepang daur ulang limbah makanan ...",
                         date: "28 September 2024",
                         author: "By Rachel Nuver",
@@ -165,8 +189,8 @@ class HomePage extends StatelessWidget {
   Widget _buildCategory(BuildContext context, String label, String assets, Color color, String categoryLabel) {
     return GestureDetector(
       onTap: () {
-        if (onCategoryTap != null) {
-          onCategoryTap!(categoryLabel);
+        if (widget.onCategoryTap != null) {
+          widget.onCategoryTap!(categoryLabel);
         }
       },
       child: Column(

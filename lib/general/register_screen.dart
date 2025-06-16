@@ -1,5 +1,6 @@
 import 'package:compwaste/Custom/phone_field.dart';
 import 'package:compwaste/controller.dart';
+import 'package:compwaste/penjual/business_info.dart';
 import 'login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -14,11 +15,13 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  final TextEditingController _emailController = new TextEditingController();
-  final TextEditingController _pekerjaanController = new TextEditingController();
-  final TextEditingController _addressController = new TextEditingController();
-  final TextEditingController _passwordController = new TextEditingController();
-  final TextEditingController _confirmPasswordController = new TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _pekerjaanController = TextEditingController();
+  final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         if (!didPop) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => LoginPage(role: widget.role,)),
+            MaterialPageRoute(builder: (context) => LoginPage(role: widget.role)),
           );
         }
       },
@@ -46,11 +49,12 @@ class _RegisterPageState extends State<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                    width: 200,
-                    child: Text(
-                      'Daftar Sebagai ${widget.role}!',
-                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
-                    )),
+                  width: 200,
+                  child: Text(
+                    'Daftar Sebagai ${widget.role}!',
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
+                  ),
+                ),
                 const SizedBox(height: 20),
                 SizedBox(
                   width: 350,
@@ -62,6 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _fullNameController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Nama Lengkap'),
@@ -90,9 +95,9 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
                 const SizedBox(height: 15),
-                PhoneNumberField(),
-                widget.role == "pembeli" ? const SizedBox(height: 15) : SizedBox.shrink(),
-                widget.role == "pembeli" ? TextField(
+                PhoneNumberField(controller: _phoneController),
+                widget.role == "pembeli"
+                    ? TextField(
                   controller: _addressController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
@@ -100,7 +105,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelStyle: TextStyle(
                         color: Colors.black.withOpacity(0.50), fontSize: 14),
                   ),
-                ) : SizedBox.shrink(),
+                )
+                    : SizedBox.shrink(),
                 const SizedBox(height: 15),
                 TextField(
                   controller: _passwordController,
@@ -110,6 +116,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelStyle: TextStyle(
                         color: Colors.black.withOpacity(0.50), fontSize: 14),
                   ),
+                  obscureText: true,
                 ),
                 const SizedBox(height: 15),
                 TextField(
@@ -120,13 +127,27 @@ class _RegisterPageState extends State<RegisterPage> {
                     labelStyle: TextStyle(
                         color: Colors.black.withOpacity(0.50), fontSize: 14),
                   ),
+                  obscureText: true,
                 ),
                 const SizedBox(height: 50),
-                widget.role == "penjual" ? GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      signUp(_emailController.text, _passwordController.text, widget.role);
-                    });
+                widget.role == "pembeli"
+                    ? GestureDetector(
+                  onTap: () async {
+                    await signUp(
+                      _emailController.text,
+                      _passwordController.text,
+                      widget.role,
+                      fullName: _fullNameController.text,
+                      pekerjaan: _pekerjaanController.text,
+                      address: _addressController.text,
+                      phone: _phoneController.text,
+                    );
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(role: widget.role),
+                      ),
+                    );
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -142,11 +163,22 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                     ),
                   ),
-                ) : GestureDetector(
+                )
+                    : GestureDetector(
                   onTap: () {
-                    setState(() {
-                      MaterialPageRoute(builder: (context) => )
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => BusinessInformation(
+                          role: widget.role,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                          fullName: _fullNameController.text,
+                          pekerjaan: _pekerjaanController.text,
+                          phone: _phoneController.text,
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     decoration: BoxDecoration(
@@ -182,7 +214,7 @@ class _RegisterPageState extends State<RegisterPage> {
                           ..onTap = () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => LoginPage(role: widget.role,),
+                                builder: (context) => LoginPage(role: widget.role),
                               ),
                             );
                           },

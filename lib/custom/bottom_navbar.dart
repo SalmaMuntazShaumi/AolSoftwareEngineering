@@ -1,10 +1,10 @@
-import 'package:compwaste/general/article.dart';
+import 'package:compwaste/pembeli/article.dart';
 import 'package:compwaste/general/chat.dart';
-import 'package:compwaste/general/detail_article.dart';
-import 'package:compwaste/general/history.dart';
+import 'package:compwaste/pembeli/detail_article.dart';
+import 'package:compwaste/pembeli/history.dart';
 import 'package:compwaste/general/home.dart';
-import 'package:compwaste/general/products.dart';
 import 'package:compwaste/pembeli/HistoryDetail.dart';
+import 'package:compwaste/pembeli/products.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBarPage extends StatefulWidget {
@@ -30,13 +30,29 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         },
       );
     } else if (_currentIndex == 0 && _selectedCategoryLabel != null) {
-      body = ProductPage(
-        categoryLabel: _selectedCategoryLabel!,
-        onBack: () {
-          setState(() {
-            _selectedCategoryLabel = null;
-          });
-        },
+      body = Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              setState(() {
+                _selectedCategoryLabel = null;
+              });
+            },
+          ),
+          title: Text(_selectedCategoryLabel!),
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          elevation: 0,
+        ),
+        body: ProductPage(
+          categoryLabel: _selectedCategoryLabel!,
+          onBack: () {
+            setState(() {
+              _selectedCategoryLabel = null;
+            });
+          },
+        ),
       );
     } else if (_currentIndex == 1 && _selectedArticle == null) {
       body = ArticlePage(
@@ -135,7 +151,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
             _selectedCategoryLabel = null;
           } else if (index == 1) {
             _selectedArticle = null;
-          } else if(index == 2) {
+          } else if (index == 2) {
             _selectedHistoryDetail = null;
           } else {
             _selectedCategoryLabel = null;
