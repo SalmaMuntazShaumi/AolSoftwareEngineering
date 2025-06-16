@@ -1,17 +1,25 @@
 import 'package:compwaste/Custom/phone_field.dart';
+import 'package:compwaste/controller.dart';
 import 'login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
-class RegisterPagePenjual extends StatefulWidget {
-  const RegisterPagePenjual({super.key});
+class RegisterPage extends StatefulWidget {
+  final String role;
+  const RegisterPage({super.key, required this.role});
 
   @override
-  State<RegisterPagePenjual> createState() => _RegisterPagePenjualState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
+class _RegisterPageState extends State<RegisterPage> {
+  final TextEditingController _emailController = new TextEditingController();
+  final TextEditingController _pekerjaanController = new TextEditingController();
+  final TextEditingController _addressController = new TextEditingController();
+  final TextEditingController _passwordController = new TextEditingController();
+  final TextEditingController _confirmPasswordController = new TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -20,13 +28,13 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
         if (!didPop) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => LoginPagePenjual()),
+            MaterialPageRoute(builder: (context) => LoginPage(role: widget.role,)),
           );
         }
       },
       child: Scaffold(
         backgroundColor: Colors.white,
-        appBar:AppBar(
+        appBar: AppBar(
           backgroundColor: Colors.white,
           surfaceTintColor: Colors.white,
           elevation: 0,
@@ -40,7 +48,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                 SizedBox(
                     width: 200,
                     child: Text(
-                      'Daftar Sebagai Penjual!',
+                      'Daftar Sebagai ${widget.role}!',
                       style: TextStyle(fontWeight: FontWeight.w600, fontSize: 24),
                     )),
                 const SizedBox(height: 20),
@@ -63,6 +71,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _pekerjaanController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Pekarjaan'),
@@ -72,6 +81,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _emailController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Email'),
@@ -81,8 +91,19 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                 ),
                 const SizedBox(height: 15),
                 PhoneNumberField(),
+                widget.role == "pembeli" ? const SizedBox(height: 15) : SizedBox.shrink(),
+                widget.role == "pembeli" ? TextField(
+                  controller: _addressController,
+                  decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    label: Text('Alamat'),
+                    labelStyle: TextStyle(
+                        color: Colors.black.withOpacity(0.50), fontSize: 14),
+                  ),
+                ) : SizedBox.shrink(),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _passwordController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Kata Sandi'),
@@ -92,6 +113,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
+                  controller: _confirmPasswordController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
                     label: Text('Konfirmasi Kata Sandi'),
@@ -100,8 +122,12 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                   ),
                 ),
                 const SizedBox(height: 50),
-                GestureDetector(
-                  onTap: () {},
+                widget.role == "penjual" ? GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      signUp(_emailController.text, _passwordController.text, widget.role);
+                    });
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xff1C1678),
@@ -111,6 +137,26 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                     child: const Center(
                       child: Text(
                         'Daftar',
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.w600),
+                      ),
+                    ),
+                  ),
+                ) : GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      MaterialPageRoute(builder: (context) => )
+                    });
+                  },
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xff1C1678),
+                      borderRadius: BorderRadius.circular(100),
+                    ),
+                    height: 50,
+                    child: const Center(
+                      child: Text(
+                        'Lanjut',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w600),
                       ),
@@ -136,7 +182,7 @@ class _RegisterPagePenjualState extends State<RegisterPagePenjual> {
                           ..onTap = () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => LoginPagePenjual(),
+                                builder: (context) => LoginPage(role: widget.role,),
                               ),
                             );
                           },

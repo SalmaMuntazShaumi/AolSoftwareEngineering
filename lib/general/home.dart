@@ -3,7 +3,6 @@ import 'dart:ffi';
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
 import 'package:compwaste/general/notif.dart';
-import 'package:compwaste/general/products.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:flutter/material.dart';
 
@@ -104,6 +103,7 @@ class HomePage extends StatelessWidget {
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
+                    mainAxisSpacing: 12
                   ),
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: categories.length,
