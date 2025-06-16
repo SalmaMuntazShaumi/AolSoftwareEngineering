@@ -32,6 +32,7 @@ class ProductController extends Controller
             'kondisi' => 'required|string',
             'syarat_ketentuan' => 'nullable|string',
             'catatan_tambahan' => 'nullable|string',
+            
         ]);
 
         if ($validator->fails()) {
