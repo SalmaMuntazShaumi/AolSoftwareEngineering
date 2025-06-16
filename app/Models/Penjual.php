@@ -24,4 +24,9 @@ class Penjual extends  Authenticatable
     protected $hidden = [
         'katasandi',
     ];
+    public function toko()
+    {
+        return $this->hasOne(Toko::class, 'penjual_id'); // adjust key if needed
+    }
+
 }

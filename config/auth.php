@@ -41,12 +41,12 @@ return [
         'provider' => 'users',
     ],
 
-    'user-api' => [
+    'api' => [
         'driver' => 'jwt',
         'provider' => 'users',
     ],
 
-    'penjual-api' => [
+    'penjual' => [
         'driver' => 'sanctum',
         'provider' => 'penjuals',
     ],

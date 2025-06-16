@@ -23,6 +23,12 @@ class Toko extends Model
 
     public function penjual()
     {
-        return $this->belongsTo(Penjual::class);
+        return $this->belongsTo(Penjual::class, 'penjual_id');
     }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
 }

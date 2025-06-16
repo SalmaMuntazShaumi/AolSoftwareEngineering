@@ -11,21 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-    Schema::create('tokos', function (Blueprint $table) {
-        $table->id();
-        $table->unsignedBigInteger('penjual_id');
-        $table->string('nama_resto');
-        $table->string('alamat');
-        $table->string('no_telp');
-        $table->enum('jenis_resto', ['individu', 'perusahaan']);
-        $table->string('tipe_resto')->nullable();
-        $table->boolean('produk_layak')->default(false);
-        $table->boolean('produk_tidak_layak')->default(false);
-        $table->text('deskripsi')->nullable();
-        $table->timestamps();
+        if (!Schema::hasTable('tokos')) {
+        Schema::create('tokos', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('penjual_id');
+            $table->string('nama_resto');
+            $table->string('alamat');
+            $table->string('no_telp');
+            $table->enum('jenis_resto', ['individu', 'perusahaan']);
+            $table->string('tipe_resto')->nullable();
+            $table->boolean('produk_layak')->default(false);
+            $table->boolean('produk_tidak_layak')->default(false);
+            $table->text('deskripsi')->nullable();
+            $table->timestamps();
 
-        $table->foreign('penjual_id')->references('id')->on('penjuals')->onDelete('cascade');
-    });
+            $table->foreign('penjual_id')->references('id')->on('penjuals')->onDelete('cascade');
+        });
+        }
 
     }
 

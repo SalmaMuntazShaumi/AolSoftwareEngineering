@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AuthPenjualController;
 use App\Http\Controllers\TokoController;
-
+use App\Http\Controllers\ProductController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,18 +23,6 @@ Route::group([
     'prefix' => 'auth'
 
 ], function ($router) {
-    // Route::post('register', [AuthController::class, 'register']);
-    // Route::post('login', [AuthController::class, 'login']);
-    // Route::post('logout', [AuthController::class, 'logout']);
-    // Route::post('refresh', [AuthController::class, 'refresh']);
-    // Route::post('me', [AuthController::class, 'me']);
-    // Route::post('/register', [AuthPenjualController::class, 'register']);
-    // Route::post('/login', [AuthPenjualController::class, 'login']);
-
-    // Route::middleware('auth:sanctum')->group(function () {
-    //     Route::post('/logout', [AuthPenjualController::class, 'logout']);
-    //     // You can add protected penjual-only routes here
-    // });
     Route::prefix('/user')->group(function () {
         Route::post('register', [AuthController::class, 'register']);
         Route::post('login', [AuthController::class, 'login']);
@@ -54,6 +42,8 @@ Route::group([
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('/toko', [TokoController::class, 'store']);
         });
-
+    });
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::post('/products', [ProductController::class, 'store']);
     });
 });
