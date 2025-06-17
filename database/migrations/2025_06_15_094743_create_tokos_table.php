@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('tokos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('penjual_id');
+            $table->foreign('penjual_id')->references('penjualid')->on('penjuals')->onDelete('cascade');
             $table->string('nama_resto');
             $table->string('alamat');
             $table->string('no_telp');
@@ -25,7 +26,6 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->timestamps();
 
-            $table->foreign('penjual_id')->references('id')->on('penjuals')->onDelete('cascade');
         });
         }
 

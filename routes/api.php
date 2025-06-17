@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthPenjualController;
 use App\Http\Controllers\TokoController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\KeranjangController;
+use App\Http\Controllers\PesananController;
 
 // USER AUTH
 Route::prefix('auth/user')->group(function () {
@@ -37,6 +38,15 @@ Route::middleware('auth:api')->group(function () {
         Route::post('/', [KeranjangController::class, 'store']);
         Route::get('/', [KeranjangController::class, 'index']);
         Route::delete('/{id}', [KeranjangController::class, 'destroy']);
+    });
+});
+Route::middleware('auth:api')->group(function () {
+    Route::prefix('pesanan')->group(function () {
+        Route::post('/', [PesananController::class, 'store']); // Buat pesanan
+        Route::get('/', [PesananController::class, 'index']); // Lihat semua pesanan user/penjual
+        Route::get('/{id}', [PesananController::class, 'show']); // Detail pesanan
+
+        Route::patch('/{id}/status', [PesananController::class, 'updateStatus']); // Ubah status
     });
 });
 

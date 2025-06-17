@@ -26,7 +26,7 @@ class Penjual extends  Authenticatable
     ];
     public function toko()
     {
-        return $this->hasOne(Toko::class, 'penjual_id'); // adjust key if needed
+        return $this->hasOne(Toko::class, 'penjual_id','penjualid'); // adjust key if needed
     }
 
 }
