@@ -1,10 +1,10 @@
+import 'package:compwaste/general/HistoryDetail.dart';
+import 'package:compwaste/general/products.dart';
 import 'package:compwaste/pembeli/article.dart';
 import 'package:compwaste/general/chat.dart';
 import 'package:compwaste/pembeli/detail_article.dart';
-import 'package:compwaste/pembeli/history.dart';
+import 'package:compwaste/general/history.dart';
 import 'package:compwaste/general/home.dart';
-import 'package:compwaste/pembeli/HistoryDetail.dart';
-import 'package:compwaste/pembeli/products.dart';
 import 'package:compwaste/penjual/input_product.dart';
 import 'package:flutter/material.dart';
 
@@ -102,14 +102,14 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
     return Scaffold(
       backgroundColor: null,
       body: body,
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: widget.role == "pembeli" ? FloatingActionButton(
         onPressed: () {},
         backgroundColor: Colors.white,
         elevation: 4,
         shape: CircleBorder(),
-        child: widget.role == "pembeli" ? Icon(Icons.shopping_cart, color: Colors.black) : Image.asset('assets/market.png', height: 32,),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        child: Icon(Icons.shopping_cart, color: Colors.black),
+      ) : null,
+      floatingActionButtonLocation: widget.role == "pembeli" ? FloatingActionButtonLocation.centerDocked : null,
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         child: BottomAppBar(
@@ -126,7 +126,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
           notchMargin: 5,
           color: Colors.white,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: widget.role == "pembeli" ? MainAxisAlignment.spaceBetween : MainAxisAlignment.spaceEvenly,
             children: [
               Row(
                 children: [
