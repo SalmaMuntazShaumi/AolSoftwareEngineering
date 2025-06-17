@@ -77,7 +77,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                     Navigator.pushAndRemoveUntil(
                       context,
-                      MaterialPageRoute(builder: (context) => CustomBottomNavBarPage()),
+                      MaterialPageRoute(builder: (context) => CustomBottomNavBarPage(role: widget.role,)),
                           (Route<dynamic> route) => false,
                     );
                   } catch (e) {

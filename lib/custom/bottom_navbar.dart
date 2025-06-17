@@ -5,9 +5,13 @@ import 'package:compwaste/pembeli/history.dart';
 import 'package:compwaste/general/home.dart';
 import 'package:compwaste/pembeli/HistoryDetail.dart';
 import 'package:compwaste/pembeli/products.dart';
+import 'package:compwaste/penjual/input_product.dart';
 import 'package:flutter/material.dart';
 
 class CustomBottomNavBarPage extends StatefulWidget {
+  final String role;
+  const CustomBottomNavBarPage({Key? key, required this.role}) : super(key: key);
+
   @override
   _CustomBottomNavBarPageState createState() => _CustomBottomNavBarPageState();
 }
@@ -54,23 +58,27 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
           },
         ),
       );
-    } else if (_currentIndex == 1 && _selectedArticle == null) {
-      body = ArticlePage(
-        onArticleTap: (article) {
-          setState(() {
-            _selectedArticle = article;
-          });
-        },
-      );
-    } else if (_currentIndex == 1 && _selectedArticle != null) {
-      body = DetailArticlePage(
-        article: _selectedArticle!,
-        onBack: () {
-          setState(() {
-            _selectedArticle = null;
-          });
-        },
-      );
+    } else if (_currentIndex == 1) {
+      if (widget.role == "penjual") {
+        body = InputProduct();
+      } else if (_selectedArticle == null) {
+        body = ArticlePage(
+          onArticleTap: (article) {
+            setState(() {
+              _selectedArticle = article;
+            });
+          },
+        );
+      } else {
+        body = DetailArticlePage(
+          article: _selectedArticle!,
+          onBack: () {
+            setState(() {
+              _selectedArticle = null;
+            });
+          },
+        );
+      }
     } else if (_currentIndex == 2 && _selectedHistoryDetail != null) {
       body = HistoryDetail(
         onBack: () {
@@ -88,7 +96,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         },
       );
     } else {
-      body = Chat();
+      body = Chat(); // pass role if needed
     }
 
     return Scaffold(
@@ -99,7 +107,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         backgroundColor: Colors.white,
         elevation: 4,
         shape: CircleBorder(),
-        child: Icon(Icons.shopping_cart, color: Colors.black),
+        child: widget.role == "pembeli" ? Icon(Icons.shopping_cart, color: Colors.black) : Image.asset('assets/market.png', height: 32,),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: ClipRRect(
@@ -124,7 +132,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
                 children: [
                   _buildTabItem(icon: 'assets/home.png', index: 0),
                   SizedBox(width: 24),
-                  _buildTabItem(icon: 'assets/article.png', index: 1),
+                  _buildTabItem(icon: widget.role == "pembeli" ? 'assets/article.png' : 'assets/prod_input.png', index: 1),
                 ],
               ),
               Row(
