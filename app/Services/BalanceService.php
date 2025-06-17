@@ -84,6 +84,10 @@ class BalanceService
                 'description' => 'Dana dirilis ke toko dari pesanan #' . $pesanan->id
             ]);
 
+            $tokoBalance->syncSalesStats();
+            $userBalance = $this->getUserBalance($userId);
+            $userBalance->syncTotalBeratTerbeli();
+
             return true;
         });
     }

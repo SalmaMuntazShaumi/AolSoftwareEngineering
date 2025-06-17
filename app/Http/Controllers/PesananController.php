@@ -328,7 +328,10 @@ class PesananController extends Controller
             $pesanan->total_harga, // amount
             $pesanan               // seluruh data pesanan
         );
-
+         $tokoBalance = $pesanan->toko->balance ?? null;
+            if ($tokoBalance) {
+                $tokoBalance->syncSalesStats();
+        }
         return response()->json([
             'message' => 'Pesanan berhasil diselesaikan dan dana diteruskan ke penjual',
             'data' => $pesanan

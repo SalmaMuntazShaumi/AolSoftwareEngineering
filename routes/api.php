@@ -80,6 +80,10 @@ use App\Http\Controllers\BalanceController;
 | AUTH ROUTES
 |--------------------------------------------------------------------------
 */
+Route::prefix('products')->group(function () {
+    Route::get('/categories', [ProductController::class, 'getCategories']);
+    Route::get('/category/{kategori}', [ProductController::class, 'getByCategory']);
+});
 
 // USER AUTH (menggunakan JWT / auth:api)
 Route::prefix('auth/user')->group(function () {

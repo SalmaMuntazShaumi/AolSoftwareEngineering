@@ -30,5 +30,10 @@ class Toko extends Model
     {
         return $this->hasMany(Product::class);
     }
+    public function pesanans()
+    {
+    return $this->hasMany(\App\Models\Pesanan::class, 'toko_id');
+    }
+
 
 }

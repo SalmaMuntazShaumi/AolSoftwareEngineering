@@ -54,4 +54,46 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Product created', 'product' => $product], 201);
     }
+     public function getByCategory($kategori)
+    {
+    // Validasi kategori
+    $validCategories = ['roti', 'lemak', 'nasi', 'daging', 'buah dan sayur', 'tulang'];
+    
+    if (!in_array(strtolower($kategori), $validCategories)) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Kategori tidak valid',
+            'valid_categories' => $validCategories
+        ], 400);
+    }
+
+    // Query produk dengan pagination
+    $products = Product::where('kategori', $kategori)
+                      ->where('total_barang', '>', 0) // Hanya produk yang tersedia
+                      ->orderBy('created_at', 'desc')
+                      ->paginate(10);
+
+    return response()->json([
+        'success' => true,
+        'category' => $kategori,
+        'data' => $products
+    ]);
+    }
+
+    /**
+     * Menampilkan semua kategori yang tersedia
+     * 
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getCategories()
+    {
+        $categories = Product::select('kategori')
+                            ->distinct()
+                            ->pluck('kategori');
+
+        return response()->json([
+            'message' => 'Daftar kategori produk',
+            'data' => $categories
+        ]);
+    }
 }
