@@ -6,133 +6,332 @@ use Illuminate\Http\Request;
 use App\Models\Pesanan;
 use App\Models\PesananDetail;
 use App\Models\Keranjang;
-use App\Models\Product;
 use Illuminate\Support\Facades\DB;
+use App\Services\BalanceService;
 
 class PesananController extends Controller
 {
+    /**
+     * Membuat pesanan baru
+     */
     public function store(Request $request)
+    {
+    $user = $request->user();
+
+    // Ambil keranjang user beserta relasi product dan toko
+    $keranjangs = Keranjang::with(['product.toko'])
+        ->where('user_id', $user->id)
+        ->get();
+
+    if ($keranjangs->isEmpty()) {
+        return response()->json(['message' => 'Keranjang kosong'], 400);
+    }
+
+    $total_harga = 0;
+    $total_berat = 0;
+    $penjual_id = null;
+    $toko_id = null;
+    $invalidProducts = [];
+
+    // Validasi isi keranjang
+    foreach ($keranjangs as $item) {
+        $product = $item->product;
+
+        if (!$product || !$product->toko) {
+            $invalidProducts[] = [
+                'product_id' => $product->id ?? null,
+                'product_name' => $product->nama ?? 'Produk tidak ditemukan',
+                'available' => $product->total_barang ?? null,
+                'requested' => $item->banyak,
+            ];
+            continue;
+        }
+
+        // Validasi stok produk
+        if ($product->total_barang < $item->banyak) {
+            $invalidProducts[] = [
+                'product_id' => $product->id,
+                'product_name' => $product->nama,
+                'available' => $product->total_barang,
+                'requested' => $item->banyak,
+            ];
+            continue;
+        }
+
+        // Validasi hanya dari 1 toko
+        if ($toko_id && $product->toko_id != $toko_id) {
+            return response()->json(['message' => 'Tidak bisa memesan dari toko berbeda dalam satu pesanan'], 400);
+        }
+
+        // Set toko dan penjual
+        $toko_id = $product->toko_id;
+        $penjual_id = $product->toko->penjual_id;
+
+        // Akumulasi total
+        $total_harga += $product->harga_berat * $item->banyak;
+        $total_berat += $product->berat * $item->banyak;
+    }
+
+    if (!empty($invalidProducts)) {
+        return response()->json([
+            'message' => 'Beberapa produk tidak bisa diproses',
+            'invalid_products' => $invalidProducts
+        ], 400);
+    }
+
+    // Validasi saldo user
+    $balanceService = app(BalanceService::class);
+    $userBalance = $balanceService->getUserBalance($user->id);
+
+    if ($userBalance->balance < $total_harga) {
+        return response()->json([
+            'message' => 'Saldo tidak mencukupi',
+            'required' => $total_harga,
+            'current_balance' => $userBalance->balance
+        ], 400);
+    }
+
+    DB::beginTransaction();
+
+    try {
+        $toko = \App\Models\Toko::where('penjual_id', $penjual_id)->first();
+
+        if (!$toko) {
+            throw new \Exception("Toko tidak ditemukan untuk penjual terkait");
+        }
+
+        $toko_id = $toko->id;
+        // Buat pesanan
+        $pesanan = Pesanan::create([
+            'user_id' => $user->id,
+            'penjual_id' => $penjual_id,
+            'toko_id' => $toko_id,
+            'total_harga' => $total_harga,
+            'total_berat' => $total_berat,
+            'status' => 'menunggu_pembayaran',
+        ]);
+
+        // Buat detail pesanan
+        foreach ($keranjangs as $item) {
+            $product = $item->product;
+
+            PesananDetail::create([
+                'pesanan_id' => $pesanan->id,
+                'produk_id' => $product->id,
+                'nama_produk' => $product->nama,
+                'foto_produk' => $product->foto,
+                'jumlah' => $item->banyak,
+                'harga' => $product->harga_berat,
+                'berat' => $product->berat,
+            ]);
+
+            // Update stok
+            $product->decrement('total_barang', $item->banyak);
+        }
+
+        // Hapus keranjang
+        Keranjang::where('user_id', $user->id)->delete();
+
+        DB::commit();
+
+        return response()->json([
+            'message' => 'Pesanan berhasil dibuat',
+            'data' => $pesanan->load([
+                'details.produk',
+                'user:id,name,email',
+                'penjual.toko:id,penjual_id,nama_resto,alamat'
+            ])
+        ], 201);
+    } catch (\Exception $e) {
+        DB::rollBack();
+
+        return response()->json([
+            'error' => 'Gagal membuat pesanan',
+            'details' => $e->getMessage()
+        ], 500);
+    }
+    }
+
+
+    /**
+     * Bayar pesanan
+     */
+    public function bayar(Request $request, $id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+
+        if ($request->user()->id != $pesanan->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($pesanan->status !== 'menunggu_pembayaran') {
+            return response()->json(['message' => 'Pesanan tidak bisa dibayar saat ini'], 400);
+        }
+
+        $balanceService = app(BalanceService::class);
+        $userBalance = $balanceService->getUserBalance($request->user()->id);
+
+        if ($userBalance->balance < $pesanan->total_harga) {
+            return response()->json([
+                'message' => 'Saldo tidak mencukupi',
+                'required' => $pesanan->total_harga,
+                'current_balance' => $userBalance->balance
+            ], 400);
+        }
+
+        $paymentSuccess = $balanceService->holdPayment($request->user()->id, $pesanan->total_harga, $pesanan);
+
+        if (!$paymentSuccess) {
+            return response()->json(['message' => 'Gagal memproses pembayaran'], 500);
+        }
+
+        $pesanan->status = 'menunggu_konfirmasi';
+        $pesanan->save();
+
+        return response()->json([
+            'message' => 'Pembayaran berhasil, menunggu konfirmasi penjual',
+            'data' => $pesanan
+        ]);
+    }
+
+    /**
+     * Daftar pesanan milik user
+     */
+    public function index(Request $request)
     {
         $user = $request->user();
 
-        // Ambil semua keranjang user
-        $keranjangs = Keranjang::where('user_id', $user->id)->get();
+        $pesanans = Pesanan::with([
+                'details.produk',
+                'penjual.toko:id,penjual_id,nama_resto,alamat'
+            ])
+            ->where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        if ($keranjangs->isEmpty()) {
-            return response()->json(['message' => 'Keranjang kosong'], 400);
-        }
-
-        // Hitung total
-        $total_harga = 0;
-        $total_berat = 0;
-
-        // Transaksi untuk mencegah inkonsistensi data
-        DB::beginTransaction();
-
-        try {
-            $penjual_id = null;
-
-            // ambil penjual dari produk pertama di keranjang
-            if ($keranjangs->first()) {
-                $penjual_id = $keranjangs->first()->product->toko->penjual_id;
-            }
-
-            // Buat pesanan
-            $pesanan = Pesanan::create([
-                'user_id' => $user->id,
-                'penjual_id' => $penjual_id,
-                'total_harga' => 0, // akan di-update
-                'total_berat' => 0, // akan di-update
-                'status' => 'menunggu_konfirmasi'
-            ]);
-
-            foreach ($keranjangs as $item) {
-                $produk = $item->product;
-                $jumlah = $item->banyak;
-
-                $total_harga += $produk->harga_berat * $jumlah;
-                $total_berat += $produk->berat * $jumlah;
-
-                PesananDetail::create([
-                    'pesanan_id' => $pesanan->id,
-                    'produk_id' => $produk->id,
-                    'nama_produk' => $produk->nama,
-                    'foto_produk' => $produk->foto,
-                    'jumlah' => $item->banyak,
-                    'harga' => $produk->harga_berat,
-                    'berat' => $produk->berat,
-                ]);
-            }
-
-            // Update total
-            $pesanan->update([
-                'total_harga' => $total_harga,
-                'total_berat' => $total_berat,
-            ]);
-
-            // Kosongkan keranjang user
-            Keranjang::where('user_id', $user->id)->delete();
-
-            DB::commit();
-
-            return response()->json([
-                'message' => 'Pesanan berhasil dibuat',
-                'data' => $pesanan->load(['details.produk', 'user', 'penjual']),
-            ], 201);
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return response()->json(['error' => 'Gagal membuat pesanan', 'details' => $e->getMessage()], 500);
-        }
+        return response()->json([
+            'message' => 'Daftar pesanan berhasil diambil',
+            'data' => $pesanans
+        ]);
     }
-    public function updateStatus(Request $request, $id)
+
+    /**
+     * Daftar pesanan milik penjual
+     */
+    public function pesananPenjual(Request $request)
     {
-    $request->validate([
-        'status' => 'required|in:menunggu_konfirmasi,dikirim,selesai,dibatalkan',
-    ]);
+        $penjual = $request->user();
 
-    $pesanan = Pesanan::findOrFail($id);
+        $pesanans = Pesanan::with([
+                'details.produk',
+                'user:id,name,email',
+                'penjual.toko'
+            ])
+            ->where('penjual_id', $penjual->penjualid)
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-    // Logika tambahan: hanya user yg bisa batalkan saat menunggu
-    if ($request->user()->id === $pesanan->user_id && $pesanan->status === 'menunggu_konfirmasi' && $request->status === 'dibatalkan') {
+        return response()->json([
+            'message' => 'Daftar pesanan penjual berhasil diambil',
+            'data' => $pesanans
+        ]);
+    }
+
+    /**
+     * Detail pesanan
+     */
+    public function show($id)
+    {
+        $pesanan = Pesanan::with([
+                'user:id,name,email,alamat',
+                'penjual.toko:id,penjual_id,nama_resto,alamat',
+                'details.produk:id,nama,foto,harga_berat,berat'
+            ])
+            ->findOrFail($id);
+
+        return response()->json([
+            'message' => 'Detail pesanan berhasil diambil',
+            'data' => $pesanan
+        ]);
+    }
+
+    /**
+     * Ubah status pesanan menjadi "dikirim" (penjual)
+     */
+    public function kirim(Request $request, $id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+
+        if ($request->user()->penjualid != $pesanan->penjual_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($pesanan->status != 'menunggu_konfirmasi') {
+            return response()->json(['message' => 'Pesanan tidak bisa dikirim dalam status saat ini'], 400);
+        }
+
+        $pesanan->status = 'dikirim';
+        $pesanan->save();
+
+        return response()->json([
+            'message' => 'Pesanan berhasil dikirim',
+            'data' => $pesanan
+        ]);
+    }
+
+    /**
+     * Batalkan pesanan (user)
+     */
+    public function batal(Request $request, $id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+
+        if ($request->user()->id != $pesanan->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        if ($pesanan->status != 'menunggu_konfirmasi') {
+            return response()->json(['message' => 'Pesanan hanya bisa dibatalkan saat menunggu konfirmasi'], 400);
+        }
+
         $pesanan->status = 'dibatalkan';
         $pesanan->save();
-        return response()->json(['message' => 'Pesanan dibatalkan oleh user.']);
+
+        return response()->json([
+            'message' => 'Pesanan berhasil dibatalkan',
+            'data' => $pesanan
+        ]);
     }
 
-    // Penjual mengubah status (dikirim/dibatalkan)
-    if (auth('sanctum')->user()->getTable() === 'penjuals') {
-        if ($request->status === 'dikirim' || $request->status === 'dibatalkan') {
-            $pesanan->status = $request->status;
-            $pesanan->save();
-            return response()->json(['message' => 'Status pesanan diubah oleh penjual.']);
+    /**
+     * Selesaikan pesanan (user)
+     */
+    public function selesai(Request $request, $id)
+    {
+        $pesanan = Pesanan::findOrFail($id);
+
+        if ($request->user()->id != $pesanan->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
-    }
 
-    // User menyelesaikan pesanan
-    if ($request->user()->id === $pesanan->user_id && $request->status === 'selesai') {
+        if ($pesanan->status !== 'dikirim') {
+            return response()->json(['message' => 'Pesanan belum bisa diselesaikan'], 400);
+        }
+
         $pesanan->status = 'selesai';
         $pesanan->save();
-        return response()->json(['message' => 'Pesanan selesai.']);
+
+        $balanceService = app(BalanceService::class);
+        $balanceService->releaseToToko(
+            $pesanan->user_id,     // userId (pembeli)
+            $pesanan->toko_id,     // tokoId (penjual)
+            $pesanan->total_harga, // amount
+            $pesanan               // seluruh data pesanan
+        );
+
+        return response()->json([
+            'message' => 'Pesanan berhasil diselesaikan dan dana diteruskan ke penjual',
+            'data' => $pesanan
+        ]);
     }
-
-    return response()->json(['message' => 'Tidak diizinkan.'], 403);
-    }
-   public function show($id)
-    {
-    $pesanan = Pesanan::with([
-        'user:id,name,alamat',
-        'penjual.toko:id,penjual_id,alamat,nama_resto',
-        'details.produk:id,nama,foto'
-    ])->findOrFail($id);
-
-    return response()->json([
-        'message' => 'Pesanan berhasil dibuat',
-        'data' => array_merge($pesanan->toArray(), [
-            'alamat_toko' => $pesanan->penjual->toko->alamat ?? null,
-            'nama_toko' => $pesanan->penjual->toko->nama_resto ?? null
-        ])
-    ]);
-    }  
-
-
 }

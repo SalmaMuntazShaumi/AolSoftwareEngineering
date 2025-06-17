@@ -12,6 +12,7 @@ class Pesanan extends Model
     protected $fillable = [
         'user_id',
         'penjual_id',
+        'toko_id',
         'total_harga',
         'total_berat',
         'status',
@@ -31,4 +32,9 @@ class Pesanan extends Model
     {
         return $this->belongsTo(Penjual::class, 'penjual_id', 'penjualid');
     }
+    public function toko()
+    {
+    return $this->belongsTo(Toko::class, 'toko_id');
+    }
+
 }
