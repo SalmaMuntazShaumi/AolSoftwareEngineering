@@ -1,0 +1,692 @@
+{
+	"info": {
+		"_postman_id": "e943d36e-373c-4d2b-8e27-abf0fe7707ad",
+		"name": "AOLSE",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "45400437",
+		"_collection_link": "https://bryan-72600.postman.co/workspace/Bryan's-Workspace~d87c0bc2-7454-4e4d-8ec2-a2731492578f/collection/45400437-e943d36e-373c-4d2b-8e27-abf0fe7707ad?action=share&source=collection_link&creator=45400437"
+	},
+	"item": [
+		{
+			"name": "Regitster",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "name",
+							"value": "BT",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "bt@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						},
+						{
+							"key": "alamat",
+							"value": "jalan sudirman 26",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/auth/user/register",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"auth",
+						"user",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "email",
+							"value": "bt@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "123456",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/auth/user/login",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"auth",
+						"user",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PenjualRegister",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"namalengkap\": \"winterkuma123\",\r\n  \"email\": \"winter2323232323@example.com\",\r\n  \"notelp\": \"081234567809\",\r\n  \"katasandi\": \"secret123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/auth/penjual/register",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"auth",
+						"penjual",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Toko",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "4|H95Ezn0kfQZc4UTjGeMhF68fU11SsqbSNCp2pFAt7090eda0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"nama_resto\": \"Restoran Test12\",\r\n  \"alamat\": \"Jl. Mawar No. 9\",\r\n  \"no_telp\": \"0811223344\",\r\n  \"jenis_resto\": \"perusahaan\",\r\n  \"tipe_resto\": \"Café\",\r\n  \"produk_layak\": false,\r\n  \"produk_tidak_layak\": true,\r\n  \"deskripsi\": \"Contoh deskripsi restoran\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/penjual/toko",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"penjual",
+						"toko"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PenjualLogin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \r\n  \"email\": \"bryan@example.com\",\r\n  \"katasandi\": \"secret123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/auth/penjual/login",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"auth",
+						"penjual",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Products",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "3|6RKDSZsZvN0wwP0bJ2eEKkVDt5i5sW5G1g549ZBK9ca5768b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "nama",
+							"value": "Nasi Uduk",
+							"type": "text"
+						},
+						{
+							"key": "kategori",
+							"value": "nasi",
+							"type": "text"
+						},
+						{
+							"key": "harga_berat",
+							"value": "10000",
+							"type": "text"
+						},
+						{
+							"key": "berat",
+							"value": "0.5",
+							"type": "text"
+						},
+						{
+							"key": "total_barang",
+							"value": "10",
+							"type": "text"
+						},
+						{
+							"key": "total_berat",
+							"value": "5",
+							"type": "text"
+						},
+						{
+							"key": "tanggal_produksi",
+							"value": "2025-06-12\t",
+							"type": "text"
+						},
+						{
+							"key": "tanggal_kadaluarsa",
+							"value": "2025-06-19\t",
+							"type": "text"
+						},
+						{
+							"key": "kondisi",
+							"value": "Fresh",
+							"type": "text"
+						},
+						{
+							"key": "foto",
+							"type": "file",
+							"src": "/C:/Users/Bryan.T/Pictures/Screenshots/Screenshot 2025-05-21 193655.png"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/auth/products",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"auth",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Keranjang",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjQ0MzE5LCJleHAiOjE3NTAyNDc5MTksIm5iZiI6MTc1MDI0NDMxOSwianRpIjoid2dtbUFOZnh0WVFtMGFRQSIsInN1YiI6IjExIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.7pfAjkv9ND4-eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjUzNjQwLCJleHAiOjE3NTAyNTcyNDAsIm5iZiI6MTc1MDI1MzY0MCwianRpIjoiWEVDdGJrZVpDNVdJWnVUWCIsInN1YiI6IjExIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.ixKwITjqKzQFEbqjYeyH8rGUARlPfudZ4ZTeg9CbsYo",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"product_id\": 4,\r\n  \"banyak\": 32\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/keranjang",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"keranjang"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "BuatPesanan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvdXNlci9sb2dpbiIsImlhdCI6MTc1MDE0Nzg1OSwiZXhwIjoxNzUwMTUxNDU5LCJuYmYiOjE3NTAxNDc4NTksImp0aSI6Ikk2R2lWTVJnbVBnbU1FUmoiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.6rRaSPko-D3WtDVzFzWDt1HR-8B_j6EsWVQao2sSDCw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/pesanan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"pesanan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "UserCheckPesanan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjU2ODg4LCJleHAiOjE3NTAyNjA0ODgsIm5iZiI6MTc1MDI1Njg4OCwianRpIjoiVmNDb0FBZzR6YVlGNXQ1TSIsInN1YiI6IjExIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.CU3LpRX233SUhl7sWQzKJ4P8OQ_uImuWKMaN5FvtUzI",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/pesanan",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"pesanan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Penjual/Confirm",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "48|kOvgIZhk1U4XwjArqWHbsDH6rXSwRnC6jh5ckNju3994ae2e",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/penjual/pesanan/14/kirim",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"penjual",
+						"pesanan",
+						"14",
+						"kirim"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User/Selesai",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjYzNDMzLCJleHAiOjE3NTAyNjcwMzMsIm5iZiI6MTc1MDI2MzQzMywianRpIjoiZE02SEFhb1pnaGhTUEswZCIsInN1YiI6IjMiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.7zIN3wj16HhcivrDJ_d7x_wrEywukDOg8xrhdsvnEK4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/pesanan/14/selesai",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"pesanan",
+						"14",
+						"selesai"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PenjualCheckPesanan",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|SE7v1XDVb6U5mtIyqu7whMiUz6BsPeuyzA1fFpNN856f709c",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/penjual/pesanan",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"penjual",
+						"pesanan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ItemCategory",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvYXBpL2F1dGgvdXNlci9sb2dpbiIsImlhdCI6MTc1MDE2NjU1OCwiZXhwIjoxNzUwMTcwMTU4LCJuYmYiOjE3NTAxNjY1NTgsImp0aSI6InYzQjV5S2t3b0hSODM5bVMiLCJzdWIiOiIxIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.gG30KEP7B7SCKNVUOvn4pdHajyXpGx3QgjvYSSLRwsc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/products/category/nasi",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"products",
+						"category",
+						"nasi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Bayar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjYzNDMzLCJleHAiOjE3NTAyNjcwMzMsIm5iZiI6MTc1MDI2MzQzMywianRpIjoiZE02SEFhb1pnaGhTUEswZCIsInN1YiI6IjMiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.7zIN3wj16HhcivrDJ_d7x_wrEywukDOg8xrhdsvnEK4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/pesanan/14/bayar",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"pesanan",
+						"14",
+						"bayar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/products/categories",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"products",
+						"categories"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetCart",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjU2NTI3LCJleHAiOjE3NTAyNjAxMjcsIm5iZiI6MTc1MDI1NjUyNywianRpIjoic2ZRTHFIb3E0Y0RKU1FveSIsInN1YiI6IjIiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.EQIMYugCra7u5e0_pREBmWpVRw2jh3mcN4AUTtBfWKQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/keranjang",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"keranjang"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckSaldoUser",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjU4MzgxLCJleHAiOjE3NTAyNjE5ODEsIm5iZiI6MTc1MDI1ODM4MSwianRpIjoiWFRqbU5zbDY5R3k1N093VyIsInN1YiI6IjExIiwicHJ2IjoiMjNiZDVjODk0OWY2MDBhZGIzOWU3MDFjNDAwODcyZGI3YTU5NzZmNyJ9.x3pf0NFEHfp35FQoToK8ZHHreVh_a4vxQTnM4Yh95cY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://compwaste.my.id/api/user/balance",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"user",
+						"balance"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "CheckPesasnanUser",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2NvbXB3YXN0ZS5teS5pZC9hcGkvYXV0aC91c2VyL2xvZ2luIiwiaWF0IjoxNzUwMjYzNDMzLCJleHAiOjE3NTAyNjcwMzMsIm5iZiI6MTc1MDI2MzQzMywianRpIjoiZE02SEFhb1pnaGhTUEswZCIsInN1YiI6IjMiLCJwcnYiOiIyM2JkNWM4OTQ5ZjYwMGFkYjM5ZTcwMWM0MDA4NzJkYjdhNTk3NmY3In0.7zIN3wj16HhcivrDJ_d7x_wrEywukDOg8xrhdsvnEK4",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \r\n  \"email\": \"bryan@example.com\",\r\n  \"katasandi\": \"secret123\"\r\n}"
+				},
+				"url": {
+					"raw": "https://compwaste.my.id/api/pesanan",
+					"protocol": "https",
+					"host": [
+						"compwaste",
+						"my",
+						"id"
+					],
+					"path": [
+						"api",
+						"pesanan"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
