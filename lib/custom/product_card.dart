@@ -31,17 +31,21 @@ class ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Flexible(
+            SizedBox(
+              width: double.infinity,
+              height: 100,
               child: ClipRRect(
                 borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
                 child: Image.network(
                   imagePath,
                   width: double.infinity,
+                  height: 100,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Image.network(
                       'https://inspektorat.palembang.go.id/assets/img/no-image.png',
                       width: double.infinity,
+                      height: 100,
                       fit: BoxFit.cover,
                     );
                   },
