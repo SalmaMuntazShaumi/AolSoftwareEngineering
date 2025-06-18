@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 class CartCard extends StatefulWidget {
   final String imagePath, title, weight, warning;
   final int pricePerKg, quantity;
-  const CartCard({super.key,required this.imagePath,
+  const CartCard({
+    super.key,
+    required this.imagePath,
     required this.title,
     required this.weight,
     required this.pricePerKg,
     required this.quantity,
-    required this.warning,});
+    required this.warning,
+  });
 
   @override
   State<CartCard> createState() => _CartCardState();
@@ -17,12 +20,13 @@ class CartCard extends StatefulWidget {
 class _CartCardState extends State<CartCard> {
   late int quantity;
   bool isChecked = true;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     quantity = widget.quantity;
   }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -35,14 +39,62 @@ class _CartCardState extends State<CartCard> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Product Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    widget.imagePath,
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
+                // Fixed width for image and quantity selector
+                SizedBox(
+                  width: 110,
+                  child: Column(
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.network(
+                          widget.imagePath,
+                          width: 80,
+                          height: 80,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Container(
+                        height: 30,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12),
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: IconButton(
+                                icon: const Icon(Icons.remove),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  setState(() {
+                                    if (quantity > 1) quantity--;
+                                  });
+                                },
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              child: Text(quantity.toString()),
+                            ),
+                            Expanded(
+                              child: IconButton(
+                                icon: const Icon(Icons.add),
+                                iconSize: 16,
+                                padding: EdgeInsets.zero,
+                                onPressed: () {
+                                  setState(() {
+                                    quantity++;
+                                  });
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -74,58 +126,16 @@ class _CartCardState extends State<CartCard> {
                         ],
                       ),
                       const SizedBox(height: 8),
-
-                      // Quantity Selector and Total Price
-                      Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: Row(
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.remove),
-                                  iconSize: 16,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    setState(() {
-                                      if (quantity > 1) quantity--;
-                                    });
-                                  },
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  child: Text(quantity.toString()),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.add),
-                                  iconSize: 16,
-                                  padding: EdgeInsets.zero,
-                                  onPressed: () {
-                                    setState(() {
-                                      quantity++;
-                                    });
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          Text(
-                            'Rp ${quantity * widget.pricePerKg}',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          )
-                        ],
+                      Text(
+                        'Rp ${quantity * widget.pricePerKg}',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       )
                     ],
                   ),
                 ),
-
                 // Checkbox
                 Column(
                   children: [
@@ -166,7 +176,7 @@ class _CartCardState extends State<CartCard> {
               )
             ],
           ),
-        )
+        ),
       ],
     );
   }
