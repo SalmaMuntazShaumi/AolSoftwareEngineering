@@ -158,58 +158,40 @@ class PesananController extends Controller
      */
     public function bayar(Request $request, $id)
     {
-    $user = auth('api')->user(); // Gunakan guard yang tepat
+        $pesanan = Pesanan::findOrFail($id);
 
-    if (!$user) {
-        return response()->json(['message' => 'User tidak terautentikasi'], 401);
-    }
+        if ($request->user()->id != $pesanan->user_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
 
-    $pesanan = Pesanan::findOrFail($id);
+        if ($pesanan->status !== 'menunggu_pembayaran') {
+            return response()->json(['message' => 'Pesanan tidak bisa dibayar saat ini'], 400);
+        }
 
-    // Cek kepemilikan pesanan
-    if ($user->id !== $pesanan->user_id) {
-        return response()->json(['message' => 'Unauthorized - pesanan bukan milik Anda'], 403);
-    }
+        $balanceService = app(BalanceService::class);
+        $userBalance = $balanceService->getUserBalance($request->user()->id);
 
-    // Cek status pesanan
-    if ($pesanan->status !== 'menunggu_pembayaran') {
-        return response()->json(['message' => 'Pesanan tidak bisa dibayar saat ini'], 400);
-    }
+        if ($userBalance->balance < $pesanan->total_harga) {
+            return response()->json([
+                'message' => 'Saldo tidak mencukupi',
+                'required' => $pesanan->total_harga,
+                'current_balance' => $userBalance->balance
+            ], 400);
+        }
 
-    // Ambil saldo pengguna
-    $balanceService = app(BalanceService::class);
-    $userBalance = $balanceService->getUserBalance($user->id);
+        $paymentSuccess = $balanceService->holdPayment($request->user()->id, $pesanan->total_harga, $pesanan);
 
-    if ($userBalance->balance < $pesanan->total_harga) {
+        if (!$paymentSuccess) {
+            return response()->json(['message' => 'Gagal memproses pembayaran'], 500);
+        }
+
+        $pesanan->status = 'menunggu_konfirmasi';
+        $pesanan->save();
+
         return response()->json([
-            'message' => 'Saldo tidak mencukupi',
-            'required' => $pesanan->total_harga,
-            'current_balance' => $userBalance->balance
-        ], 400);
-    }
-
-    // Proses pembayaran (hold)
-    $paymentSuccess = $balanceService->holdPayment(
-        $user->id,
-        $pesanan->total_harga,
-        $pesanan
-    );
-
-    if (!$paymentSuccess) {
-        return response()->json([
-            'message' => 'Gagal memproses pembayaran',
-            'error' => 'Hold payment gagal dari BalanceService'
-        ], 500);
-    }
-
-    // Update status pesanan
-    $pesanan->status = 'menunggu_konfirmasi';
-    $pesanan->save();
-
-    return response()->json([
-        'message' => 'Pembayaran berhasil, menunggu konfirmasi penjual',
-        'data' => $pesanan
-    ]);
+            'message' => 'Pembayaran berhasil, menunggu konfirmasi penjual',
+            'data' => $pesanan
+        ]);
     }
 
     /**
