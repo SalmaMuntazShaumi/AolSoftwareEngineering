@@ -35,4 +35,23 @@ class KeranjangController extends Controller
             'keranjang' => $keranjang->load('product'),
         ], 201);
     }
+    public function index(Request $request)
+    {
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['message' => 'Unauthorized - user tidak ditemukan'], 401);
+    }
+
+    $keranjangs = Keranjang::with('product')
+        ->where('user_id', $user->id)
+        ->get();
+
+    return response()->json([
+        'message' => 'Daftar keranjang pengguna',
+        'keranjangs' => $keranjangs
+    ]);
+    }
+
+
 }
