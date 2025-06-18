@@ -175,7 +175,7 @@ class _HomePageState extends State<HomePage> {
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)) : SizedBox.shrink(),
               const SizedBox(height: 14),
               role == "pembeli" ? SizedBox(
-                height: 250,
+                height: 210,
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 3,
@@ -353,7 +353,7 @@ class _HomePageState extends State<HomePage> {
         children: [
           CircleAvatar(
               backgroundColor: color,
-              radius: 40,
+              radius: 30,
               child: Image.asset(assets, height: 40, width: 40,)
           ),
           const SizedBox(height: 6),

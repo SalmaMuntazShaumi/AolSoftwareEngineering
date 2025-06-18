@@ -86,6 +86,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
             _selectedHistoryDetail = null;
           });
         },
+        role: widget.role,
       );
     } else if (_currentIndex == 2) {
       body = HistoryPage(
@@ -94,6 +95,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
             _selectedHistoryDetail = history;
           });
         },
+        role: widget.role,
       );
     } else {
       body = Chat(); // pass role if needed
