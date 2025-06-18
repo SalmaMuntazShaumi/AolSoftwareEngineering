@@ -11,6 +11,7 @@ class BusinessInformation extends StatefulWidget {
   final String fullName;
   final String pekerjaan;
   final String phone;
+  final String token;
 
   const BusinessInformation({
     super.key,
@@ -20,6 +21,7 @@ class BusinessInformation extends StatefulWidget {
     required this.fullName,
     required this.pekerjaan,
     required this.phone,
+    required this.token,
   });
 
   @override
@@ -30,8 +32,20 @@ class _BusinessInformationState extends State<BusinessInformation> {
   final TextEditingController _restoName = TextEditingController();
   final TextEditingController _restoDesc = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _tipeRestoController = TextEditingController();
 
   String? jenis;
+  bool produkLayak = false;
+  bool produkTidakLayak = false;
+  bool _isLoading = false;
+
+
+  @override
+  void initState() {
+    super.initState();
+    _phoneController.text = widget.phone;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,16 +101,26 @@ class _BusinessInformationState extends State<BusinessInformation> {
                   ),
                 ),
                 const SizedBox(height: 15),
+                TextField(
+                  controller: _phoneController,
+                  decoration: InputDecoration(
+                    alignLabelWithHint: true,
+                    label: Text('No. Telepon'),
+                    labelStyle: TextStyle(
+                        color: Colors.black.withOpacity(0.50), fontSize: 14),
+                  ),
+                ),
+                const SizedBox(height: 15),
                 Text('Jenis Restoran :', style: TextStyle(
                     color: Colors.black.withOpacity(0.50), fontSize: 14)),
-                Column(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(
-                      height: 40,
+                    Expanded(
                       child: RadioListTile<String>(
                         contentPadding: EdgeInsets.zero,
-                        selectedTileColor: Color(0xff1C1678),
-                        title: Text('Individu'),
+                        dense: true,
+                        title: Text('Individu', style: TextStyle(fontSize: 14),),
                         value: 'individu',
                         groupValue: jenis,
                         onChanged: (value) {
@@ -106,11 +130,10 @@ class _BusinessInformationState extends State<BusinessInformation> {
                         },
                       ),
                     ),
-                    SizedBox(
-                      height: 40,
+                    Expanded(
                       child: RadioListTile<String>(
                         contentPadding: EdgeInsets.zero,
-                        title: Text('Perusahaan'),
+                        title: Text('Perusahaan', style: TextStyle(fontSize: 14),),
                         value: 'perusahaan',
                         groupValue: jenis,
                         onChanged: (value) {
@@ -123,27 +146,81 @@ class _BusinessInformationState extends State<BusinessInformation> {
                   ],
                 ),
                 TextField(
-                  controller: _restoDesc,
+                  controller: _tipeRestoController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
-                    label: Text('Deskripsi Restoran'),
-                    labelStyle  : TextStyle(
+                    label: Text('Tipe Restoran (misal: Café)'),
+                    labelStyle: TextStyle(
                         color: Colors.black.withOpacity(0.50), fontSize: 14),
                   ),
                 ),
                 const SizedBox(height: 15),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: produkLayak,
+                      onChanged: (val) {
+                        setState(() {
+                          produkLayak = val ?? false;
+                        });
+                      },
+                    ),
+                    const Text('Produk Layak'),
+                    const SizedBox(width: 20),
+                    Checkbox(
+                      value: produkTidakLayak,
+                      onChanged: (val) {
+                        setState(() {
+                          produkTidakLayak = val ?? false;
+                        });
+                      },
+                    ),
+                    Expanded(child: const Text('Produk Tidak Layak')),
+                  ],
+                ),
+                SizedBox(
+                  height: 60,
+                  child: TextField(
+                    controller: _restoDesc,
+                    maxLines: null,
+                    expands: true,
+                    decoration: InputDecoration(
+                      alignLabelWithHint: true,
+                      label: Text('Deskripsi Restoran'),
+                      labelStyle: TextStyle(
+                          color: Colors.black.withOpacity(0.50), fontSize: 14),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 15),
                 GestureDetector(
-                    onTap: () async{
-                      await signUp(
-                        widget.email,
-                        widget.password,
-                        widget.role,
-                        fullName: widget.fullName,
-                        pekerjaan: widget.pekerjaan,
-                        address: _addressController.text,
-                        phone: widget.phone,
-                        jenis: jenis, // add this
-                        restoName: _restoName.text, // add this
+                  onTap: _isLoading
+                      ? null
+                      : () async {
+                    // Simple validation
+                    if (_restoName.text.isEmpty ||
+                        _addressController.text.isEmpty ||
+                        _phoneController.text.isEmpty ||
+                        jenis == null ||
+                        _tipeRestoController.text.isEmpty ||
+                        _restoDesc.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Please fill all fields.')),
+                      );
+                      return;
+                    }
+                    setState(() => _isLoading = true);
+                    try {
+                      await registerToko(
+                        token: widget.token,
+                        namaResto: _restoName.text,
+                        alamat: _addressController.text,
+                        noTelp: _phoneController.text,
+                        jenisResto: jenis ?? '',
+                        tipeResto: _tipeRestoController.text,
+                        produkLayak: produkLayak,
+                        produkTidakLayak: produkTidakLayak,
+                        deskripsi: _restoDesc.text,
                       );
                       Navigator.pushReplacement(
                         context,
@@ -151,15 +228,24 @@ class _BusinessInformationState extends State<BusinessInformation> {
                           builder: (context) => LoginPage(role: widget.role),
                         ),
                       );
-                    },
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Registration failed: $e')),
+                      );
+                    } finally {
+                      setState(() => _isLoading = false);
+                    }
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xff1C1678),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     height: 50,
-                    child: const Center(
-                      child: Text(
+                    child: Center(
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : const Text(
                         'Daftar',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w600),

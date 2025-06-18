@@ -4,7 +4,6 @@ import 'package:compwaste/penjual/business_info.dart';
 import 'login.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class RegisterPage extends StatefulWidget {
   final String role;
@@ -16,12 +15,93 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _fullNameController = TextEditingController();
-  final TextEditingController _pekerjaanController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _pekerjaanController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
+
+  bool _isLoading = false;
+
+  void _registerPembeli() async {
+    setState(() => _isLoading = true);
+    try {
+      await signUp(
+        _emailController.text,
+        _passwordController.text,
+        widget.role,
+        name: _fullNameController.text,
+        alamat: _addressController.text,
+      );
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(role: widget.role),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  void _registerPenjualAndNavigate() async {
+    setState(() => _isLoading = true);
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Passwords do not match.')),
+      );
+      setState(() => _isLoading = false);
+      return;
+    }
+    try {
+      // Assign the result of signUp to tokenResult
+      final tokenResult = await signUp(
+        _emailController.text,
+        _passwordController.text,
+        widget.role,
+        namalengkap: _fullNameController.text,
+        notelp: _phoneController.text,
+      );
+
+      // Extract the token as a String
+      final fetchedToken = tokenResult is String
+          ? tokenResult
+          : (tokenResult is Map && tokenResult['token'] is String
+          ? tokenResult['token']
+          : await fetchPenjualToken(_emailController.text, _passwordController.text));
+
+      if (fetchedToken == null || fetchedToken is! String) throw Exception('Failed to retrieve token.');
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => BusinessInformation(
+              role: widget.role,
+              email: _emailController.text,
+              password: _passwordController.text,
+              fullName: _fullNameController.text,
+              pekerjaan: widget.role,
+              phone: _phoneController.text,
+              token: fetchedToken,
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Registration failed: $e')),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,16 +156,6 @@ class _RegisterPageState extends State<RegisterPage> {
                 ),
                 const SizedBox(height: 15),
                 TextField(
-                  controller: _pekerjaanController,
-                  decoration: InputDecoration(
-                    alignLabelWithHint: true,
-                    label: Text('Pekarjaan'),
-                    labelStyle: TextStyle(
-                        color: Colors.black.withOpacity(0.50), fontSize: 14),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                TextField(
                   controller: _emailController,
                   decoration: InputDecoration(
                     alignLabelWithHint: true,
@@ -132,31 +202,17 @@ class _RegisterPageState extends State<RegisterPage> {
                 const SizedBox(height: 50),
                 widget.role == "pembeli"
                     ? GestureDetector(
-                  onTap: () async {
-                    await signUp(
-                      _emailController.text,
-                      _passwordController.text,
-                      widget.role,
-                      fullName: _fullNameController.text,
-                      pekerjaan: _pekerjaanController.text,
-                      address: _addressController.text,
-                      phone: _phoneController.text,
-                    );
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => LoginPage(role: widget.role),
-                      ),
-                    );
-                  },
+                  onTap: _isLoading ? null : _registerPembeli,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xff1C1678),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     height: 50,
-                    child: const Center(
-                      child: Text(
+                    child: Center(
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : const Text(
                         'Daftar',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w600),
@@ -165,29 +221,17 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 )
                     : GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => BusinessInformation(
-                          role: widget.role,
-                          email: _emailController.text,
-                          password: _passwordController.text,
-                          fullName: _fullNameController.text,
-                          pekerjaan: _pekerjaanController.text,
-                          phone: _phoneController.text,
-                        ),
-                      ),
-                    );
-                  },
+                  onTap: _isLoading ? null : _registerPenjualAndNavigate,
                   child: Container(
                     decoration: BoxDecoration(
                       color: Color(0xff1C1678),
                       borderRadius: BorderRadius.circular(100),
                     ),
                     height: 50,
-                    child: const Center(
-                      child: Text(
+                    child: Center(
+                      child: _isLoading
+                          ? CircularProgressIndicator(color: Colors.white)
+                          : const Text(
                         'Lanjut',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w600),

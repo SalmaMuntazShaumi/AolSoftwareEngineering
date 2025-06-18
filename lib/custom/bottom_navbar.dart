@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:compwaste/controller.dart';
 import 'package:compwaste/general/HistoryDetail.dart';
 import 'package:compwaste/general/products.dart';
 import 'package:compwaste/pembeli/article.dart';
@@ -6,11 +9,12 @@ import 'package:compwaste/pembeli/detail_article.dart';
 import 'package:compwaste/general/history.dart';
 import 'package:compwaste/general/home.dart';
 import 'package:compwaste/penjual/input_product.dart';
-import 'package:flutter/material.dart';
 
 class CustomBottomNavBarPage extends StatefulWidget {
   final String role;
-  const CustomBottomNavBarPage({Key? key, required this.role}) : super(key: key);
+  final String userId;
+  final String token;
+  const CustomBottomNavBarPage({Key? key, required this.role, required this.userId, required this.token}) : super(key: key);
 
   @override
   _CustomBottomNavBarPageState createState() => _CustomBottomNavBarPageState();
@@ -21,6 +25,43 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
   String? _selectedCategoryLabel;
   Map<String, dynamic>? _selectedHistoryDetail;
   Map<String, dynamic>? _selectedArticle;
+  String? _penjualToken;
+  bool _loadingToken = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.role == "penjual") {
+      if (widget.token.isNotEmpty) {
+        _penjualToken = widget.token;
+      } else {
+        _fetchPenjualToken();
+      }
+    }
+  }
+
+  Future<void> _fetchPenjualToken() async {
+    setState(() => _loadingToken = true);
+    final prefs = await SharedPreferences.getInstance();
+    final email = prefs.getString('penjual_email') ?? '';
+    final password = prefs.getString('penjual_password') ?? '';
+    if (email.isEmpty || password.isEmpty) {
+      setState(() {
+        _penjualToken = null;
+        _loadingToken = false;
+      });
+      return;
+    }
+    try {
+      final token = await fetchPenjualToken(email, password);
+      setState(() {
+        _penjualToken = token;
+        _loadingToken = false;
+      });
+    } catch (e) {
+      setState(() => _loadingToken = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +73,7 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
             _selectedCategoryLabel = categoryLabel;
           });
         },
+        role: widget.role,
       );
     } else if (_currentIndex == 0 && _selectedCategoryLabel != null) {
       body = Scaffold(
@@ -60,7 +102,13 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
       );
     } else if (_currentIndex == 1) {
       if (widget.role == "penjual") {
-        body = InputProduct();
+        if (_loadingToken) {
+          body = Center(child: CircularProgressIndicator());
+        } else if (_penjualToken == null || _penjualToken!.isEmpty) {
+          body = Center(child: Text("Token not found. Please login again."));
+        } else {
+          body = InputProduct(token: _penjualToken!);
+        }
       } else if (_selectedArticle == null) {
         body = ArticlePage(
           onArticleTap: (article) {
@@ -98,19 +146,23 @@ class _CustomBottomNavBarPageState extends State<CustomBottomNavBarPage> {
         role: widget.role,
       );
     } else {
-      body = Chat(); // pass role if needed
+      body = Chat();
     }
 
     return Scaffold(
       backgroundColor: null,
       body: body,
-      floatingActionButton: widget.role == "pembeli" ? FloatingActionButton(
-        onPressed: () {},
+      floatingActionButton: widget.role == "pembeli"
+          ? FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/cartPage');
+        },
         backgroundColor: Colors.white,
         elevation: 4,
         shape: CircleBorder(),
         child: Icon(Icons.shopping_cart, color: Colors.black),
-      ) : null,
+      )
+          : null,
       floatingActionButtonLocation: widget.role == "pembeli" ? FloatingActionButtonLocation.centerDocked : null,
       bottomNavigationBar: ClipRRect(
         borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
