@@ -1,16 +1,23 @@
 import 'package:flutter/material.dart';
 
 class HistoryCard extends StatefulWidget {
-  final String img, productName, price, status;
+  final String docId;
+  final String img, productName, price, status, role;
   final int qty;
+  final VoidCallback? onKirim;
+  final VoidCallback? onSelesai;
 
   const HistoryCard({
     super.key,
+    required this.docId,
     required this.img,
     required this.productName,
     required this.qty,
     required this.price,
     required this.status,
+    required this.role,
+    this.onKirim,
+    this.onSelesai,
   });
 
   @override
@@ -20,6 +27,7 @@ class HistoryCard extends StatefulWidget {
 class _HistoryCardState extends State<HistoryCard> {
   @override
   Widget build(BuildContext context) {
+    final status = widget.status.toLowerCase();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
@@ -69,8 +77,8 @@ class _HistoryCardState extends State<HistoryCard> {
               )
             ],
           ),
-          if (widget.status.toLowerCase() != 'batal') const SizedBox(height: 16),
-          if (widget.status.toLowerCase() != 'batal')
+          if (status != 'batal' && status != 'selesai') ...[
+            const SizedBox(height: 16),
             Row(
               children: [
                 Expanded(
@@ -93,23 +101,43 @@ class _HistoryCardState extends State<HistoryCard> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(
-                        padding: const WidgetStatePropertyAll(
-                            EdgeInsets.symmetric(vertical: 4, horizontal: 38)),
-                        shape: WidgetStatePropertyAll(OutlinedBorder.lerp(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            RoundedRectangleBorder(),
-                            0)),
-                        backgroundColor: const WidgetStatePropertyAll(Color(0xff1C1678))),
-                    child: const Text('Lacak', style: TextStyle(color: Colors.white)),
-                  ),
-                )
+                if (widget.role == "penjual" && status == "pesanan")
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: widget.onKirim,
+                      style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(
+                              EdgeInsets.symmetric(vertical: 4, horizontal: 38)),
+                          shape: WidgetStatePropertyAll(OutlinedBorder.lerp(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              RoundedRectangleBorder(),
+                              0)),
+                          backgroundColor: const WidgetStatePropertyAll(Color(0xff1C1678))),
+                      child: const Text('Kirim', style: TextStyle(color: Colors.white)),
+                    ),
+                  )
+                else if (widget.role == "pembeli" && status == "dikirm")
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: widget.onSelesai,
+                      style: ButtonStyle(
+                          padding: const WidgetStatePropertyAll(
+                              EdgeInsets.symmetric(vertical: 4, horizontal: 38)),
+                          shape: WidgetStatePropertyAll(OutlinedBorder.lerp(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              RoundedRectangleBorder(),
+                              0)),
+                          backgroundColor: const WidgetStatePropertyAll(Color(0xff1C1678))),
+                      child: const Text('Selesai', style: TextStyle(color: Colors.white)),
+                    ),
+                  )
+                else
+                  const SizedBox(),
               ],
-            )
+            ),
+          ],
         ],
       ),
     );

@@ -1,10 +1,12 @@
 import 'package:compwaste/firebase_options.dart';
 import 'package:compwaste/general/HistoryDetail.dart';
+import 'package:compwaste/general/login.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:compwaste/general/splash_screen.dart';
 import 'package:compwaste/pembeli/detail_article.dart';
 import 'package:compwaste/general/detail_products.dart';
+import 'package:compwaste/role_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -32,10 +34,11 @@ class MyApp extends StatelessWidget {
       ),
       home: SplashScreen(),
       routes: {
+        '/role': (context) => const RolePage(),
         '/notification': (context) => const NotificationPage(),
         '/profile': (context) => const ProfilePage(),
         '/productDetail': (context) => const DetailProducts(),
-        '/history_detail': (context) => const HistoryDetail(),
+        '/history_detail': (context) => const HistoryDetail(role: '',),
       },
       onGenerateRoute: (settings) {
         if (settings.name == '/detailArticle') {

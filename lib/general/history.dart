@@ -3,8 +3,9 @@ import 'package:compwaste/custom/waste_card.dart';
 import 'package:flutter/material.dart';
 
 class HistoryPage extends StatefulWidget {
+  final String role;
   final void Function(Map<String, dynamic> history)? onHistoryTap;
-  const HistoryPage({super.key, this.onHistoryTap});
+  const HistoryPage({super.key, this.onHistoryTap, required this.role});
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -28,10 +29,10 @@ class _HistoryPageState extends State<HistoryPage> {
           padding: const EdgeInsets.all(16),
           children: [
             Text('Activity Summary', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500)),
+            widget.role == "pembeli" ? const SizedBox(height: 16) : SizedBox(),
+            widget.role == "pembeli" ? EmissionSummaryCard() : SizedBox(),
             const SizedBox(height: 16),
-            EmissionSummaryCard(),
-            const SizedBox(height: 16),
-            Row(
+            widget.role == "pembeli" ? Row(
               children: [
                 SizedBox(
                   width: 120,
@@ -94,8 +95,8 @@ class _HistoryPageState extends State<HistoryPage> {
                   ),
                 ),
               ],
-            ),
-            const SizedBox(height: 16),
+            ) : SizedBox(),
+            widget.role == "pembeli" ? const SizedBox(height: 16) : SizedBox(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -112,6 +113,7 @@ class _HistoryPageState extends State<HistoryPage> {
                 )
               ],
             ),
+            const SizedBox(height: 8),
             GestureDetector(
               onTap: () {
                 if (widget.onHistoryTap != null) {
@@ -120,6 +122,20 @@ class _HistoryPageState extends State<HistoryPage> {
               },
               child: WasteCard(),
             ),
+            widget.role == "penjual" ? Padding(
+              padding: const EdgeInsets.only(top: 16, left: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Total Pemasukan",
+                      style: TextStyle(fontWeight: FontWeight.w400, fontSize: 14, color: Colors.grey)),
+                  const SizedBox(height: 8),
+                  Text("Rp 1.000.000",
+                      style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)),
+                ],
+              ),
+            ) : SizedBox(),
+
           ],
         ),
       ),
