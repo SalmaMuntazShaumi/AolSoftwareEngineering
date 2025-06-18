@@ -16,17 +16,19 @@ class _SearchbarState extends State<Searchbar> {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 45,
-      child: TextField(
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(horizontal: 16),
-          hintText: 'Cari',
-          border: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.grey),
-            borderRadius: BorderRadius.circular(100),
+    return Material(
+      child: SizedBox(
+        height: 34,
+        child: TextField(
+          decoration: InputDecoration(
+            contentPadding: EdgeInsets.symmetric(horizontal: 16),
+            hintText: 'Cari',
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.grey),
+              borderRadius: BorderRadius.circular(100),
+            ),
+            suffixIcon: Container(padding: EdgeInsets.all(4), margin: EdgeInsets.only(right: 16), child: Image.asset('assets/loupe.png', width: 12, height: 12)),
           ),
-          suffixIcon: Container(margin: EdgeInsets.only(right: 16), child: Image.asset('assets/loupe.png', width: 12, height: 12)),
         ),
       ),
     );

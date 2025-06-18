@@ -7,12 +7,12 @@ import 'package:compwaste/pembeli/cart_screen.dart';
 import 'package:compwaste/pembeli/detail_article.dart';
 import 'package:compwaste/general/detail_products.dart';
 import 'package:compwaste/role_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'Custom/bottom_navbar.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(const MyApp());
 }
 
