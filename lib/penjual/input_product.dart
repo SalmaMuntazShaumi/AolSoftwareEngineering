@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import '../controller.dart'; // Make sure this import is correct
 
 class InputProduct extends StatefulWidget {
-  const InputProduct({super.key});
+  final String token;
+  const InputProduct({super.key, required this.token});
 
   @override
   State<InputProduct> createState() => _InputProductState();
@@ -10,6 +14,8 @@ class InputProduct extends StatefulWidget {
 class _InputProductState extends State<InputProduct> {
   String _category = "layak";
   int _step = 0;
+  List<String> kategoriList = ['roti', 'lemak', 'nasi', 'daging', 'buah dan sayur', 'tulang'];
+  String selectedKategori = 'tulang';
 
   TextEditingController nameController = TextEditingController();
   TextEditingController descController = TextEditingController();
@@ -20,6 +26,70 @@ class _InputProductState extends State<InputProduct> {
   TextEditingController optionalReferenceController = TextEditingController();
 
   String selectedUnit = "Kg";
+  File? _selectedImage;
+
+  DateTime? _produksiDate;
+  DateTime? _kadaluarsaDate;
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked = await picker.pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() {
+        _selectedImage = File(picked.path);
+      });
+    }
+  }
+
+  Future<void> _pickDate(BuildContext context, bool isProduksi) async {
+    final now = DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: DateTime(now.year - 1),
+      lastDate: DateTime(now.year + 2),
+    );
+    if (picked != null) {
+      setState(() {
+        if (isProduksi) {
+          _produksiDate = picked;
+        } else {
+          _kadaluarsaDate = picked;
+        }
+      });
+    }
+  }
+
+  Future<void> _onSave() async {
+    if (_selectedImage == null || _produksiDate == null || _kadaluarsaDate == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Please fill all required fields and pick an image.')),
+      );
+      return;
+    }
+    try {
+      await createProduct(
+        token: widget.token,
+        nama: nameController.text,
+        kategori: selectedKategori, // <-- use the selected value
+        deskripsi: descController.text,
+        foto: _selectedImage,
+        hargaBerat: double.tryParse(priceController.text) ?? 0.0,
+        berat: double.tryParse(weightController.text) ?? 0.0,
+        totalBarang: int.tryParse(totalBarangController.text) ?? 0,
+        totalBerat: double.tryParse(weightController.text) ?? 0.0,
+        tanggalProduksi: _produksiDate!.toIso8601String().split('T').first,
+        tanggalKadaluarsa: _kadaluarsaDate!.toIso8601String().split('T').first,
+        kondisi: _category == "layak" ? "layak" : "tidak",
+        syaratKetentuan: 'asdasdadasdasdasdasasd',
+        catatanTambahan: 'adsasdasdasdadasasdad',
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menambah produk: $e')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +114,18 @@ class _InputProductState extends State<InputProduct> {
                       const Text("Kategori Produk", style: TextStyle(fontWeight: FontWeight.w600)),
                       Column(
                         children: [
-                          _buildRadio("Layak Konsumsi", "layak"),
-                          _buildRadio("Tidak Layak Konsumsi", "tidak"),
+                          DropdownButtonFormField<String>(
+                            value: selectedKategori,
+                            items: kategoriList
+                                .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+                                .toList(),
+                            onChanged: (val) => setState(() => selectedKategori = val!),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                              isDense: true,
+                            ),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 16),
@@ -63,8 +143,11 @@ class _InputProductState extends State<InputProduct> {
                       const SizedBox(height: 16),
                       const Text("Upload Foto Produk", style: TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 12),
+                      _selectedImage != null
+                          ? Image.file(_selectedImage!, height: 100)
+                          : SizedBox.shrink(),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _pickImage,
                         child: const Text("Tambah Image"),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurple[100],
@@ -160,22 +243,29 @@ class _InputProductState extends State<InputProduct> {
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _buildDateDropdown("Hari", List.generate(31, (i) => "${i + 1}")),
-                          const SizedBox(width: 8),
-                          _buildDateDropdown("Bulan", ["April", "Mei", "Juni"]),
-                          const SizedBox(width: 8),
-                          _buildDateDropdown("Tahun", ["2025", "2026"]),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => _pickDate(context, true),
+                              child: Text(_produksiDate == null
+                                  ? "Pilih Tanggal"
+                                  : "${_produksiDate!.day}/${_produksiDate!.month}/${_produksiDate!.year}"),
+                            ),
+                          ),
                         ],
                       ),
+                      const SizedBox(height: 8),
                       const Text("Kadaluwarsa", style: TextStyle(fontWeight: FontWeight.w600)),
                       const SizedBox(height: 8),
                       Row(
                         children: [
-                          _buildDateDropdown("Hari", List.generate(31, (i) => "${i + 1}")),
-                          const SizedBox(width: 8),
-                          _buildDateDropdown("Bulan", ["April", "Mei", "Juni"]),
-                          const SizedBox(width: 8),
-                          _buildDateDropdown("Tahun", ["2025", "2026"]),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => _pickDate(context, false),
+                              child: Text(_kadaluarsaDate == null
+                                  ? "Pilih Tanggal"
+                                  : "${_kadaluarsaDate!.day}/${_kadaluarsaDate!.month}/${_kadaluarsaDate!.year}"),
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -218,21 +308,7 @@ class _InputProductState extends State<InputProduct> {
                     const SizedBox(width: 8),
                     Expanded(
                       child: ElevatedButton(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (_) => AlertDialog(
-                              title: const Text("Produk Disimpan"),
-                              content: const Text("Produk berhasil ditambahkan."),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: const Text("Close"),
-                                ),
-                              ],
-                            ),
-                          );
-                        },
+                        onPressed: _onSave,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepPurple[100],
                         ),
@@ -278,15 +354,15 @@ class _InputProductState extends State<InputProduct> {
         Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 8),
         SizedBox(
-          height: height, // or your desired height
+          height: height,
           child: TextField(
             controller: controller,
             decoration: InputDecoration(
               filled: true,
               fillColor: Colors.grey[100],
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              contentPadding: EdgeInsets.symmetric(horizontal: 8), // adjust vertical
-              isDense: false, // set to false for more space
+              contentPadding: EdgeInsets.symmetric(horizontal: 8),
+              isDense: false,
             ),
           ),
         )
@@ -304,25 +380,6 @@ class _InputProductState extends State<InputProduct> {
         ),
         Text(label),
       ],
-    );
-  }
-
-  Widget _buildDateDropdown(String hint, List<String> items) {
-    return Expanded(
-      child: SizedBox(
-        height: 48,
-        child: DropdownButtonFormField<String>(
-          value: items.first,
-          items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-          onChanged: (_) {},
-          decoration: InputDecoration(
-            hintText: hint,
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-            isDense: true,
-          ),
-        ),
-      ),
     );
   }
 }

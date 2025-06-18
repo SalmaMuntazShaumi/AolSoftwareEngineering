@@ -1,16 +1,16 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
 import 'package:compwaste/general/notif.dart';
 import 'package:compwaste/general/profile.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   final void Function(String categoryLabel)? onCategoryTap;
+  final String role; // Pass role directly
 
-  const HomePage({super.key, this.onCategoryTap});
+  const HomePage({super.key, this.onCategoryTap, required this.role});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -19,7 +19,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? fullName;
   String? email;
-  String? role;
 
   @override
   void initState() {
@@ -28,15 +27,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _loadUserData() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      setState(() {
-        fullName = doc.data()?['fullName'] ?? 'User';
-        email = user.email;
-        role = doc.data()?['role'] ?? 'Guest';
-      });
-    }
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      fullName = prefs.getString('name') ?? "User";
+      email = prefs.getString('email');
+    });
   }
 
   @override
@@ -149,13 +144,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   Row(
                     children: [
-                      role == "pembeli" ? Icon(Icons.search) : IconButton(icon: Icon(Icons.notifications_outlined), onPressed: (){
+                      widget.role == "pembeli" ? Icon(Icons.search) : IconButton(icon: Icon(Icons.notifications_outlined), onPressed: (){
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const NotificationPage()),
                         );
                       },),
-                      role == "pembeli" ? IconButton(icon: Icon(Icons.notifications_outlined), onPressed: (){
+                      widget.role == "pembeli" ? IconButton(icon: Icon(Icons.notifications_outlined), onPressed: (){
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (context) => const NotificationPage()),
@@ -168,13 +163,13 @@ class _HomePageState extends State<HomePage> {
                   )
                 ],
               ),
-              role == "pembeli" ? const SizedBox(height: 32) : const SizedBox.shrink(),
-              role == "pembeli" ? EmissionCard() : SizedBox.shrink(),
-              role == "pembeli" ? const SizedBox(height: 30) :  SizedBox.shrink(),
-              role == "pembeli" ?const Text("Product Tersedia",
+              widget.role == "pembeli" ? const SizedBox(height: 32) : const SizedBox.shrink(),
+              widget.role == "pembeli" ? EmissionCard() : SizedBox.shrink(),
+              widget.role == "pembeli" ? const SizedBox(height: 30) :  SizedBox.shrink(),
+              widget.role == "pembeli" ?const Text("Product Tersedia",
                   style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16)) : SizedBox.shrink(),
               const SizedBox(height: 14),
-              role == "pembeli" ? SizedBox(
+              widget.role == "pembeli" ? SizedBox(
                 height: 210,
                 child: GridView.builder(
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -218,7 +213,7 @@ class _HomePageState extends State<HomePage> {
                 },
               ),
               const SizedBox(height: 30),
-              role == "pembeli" ? Row(
+              widget.role == "pembeli" ? Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: const [
                   Text("Berita Terbaru",
@@ -255,10 +250,10 @@ class _HomePageState extends State<HomePage> {
                                 getTitlesWidget: (value, meta) {
                                   return Text(
                                     value.toStringAsExponential(0),
-                                    style: const TextStyle(fontSize: 10), // Set your desired small size
+                                    style: const TextStyle(fontSize: 10),
                                   );
                                 },
-                                reservedSize: 30, // Optionally reduce reserved space
+                                reservedSize: 30,
                               ),
                             ),
                             rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -270,7 +265,6 @@ class _HomePageState extends State<HomePage> {
                                 reservedSize: 20,
                                 getTitlesWidget: (value, meta) {
                                   int idx = value.toInt();
-                                  // Use only as many month labels as data points
                                   if (idx >= 0 && idx < yValues.length && idx < monthLabels.length) {
                                     return Text(
                                       monthLabels[idx],
@@ -311,7 +305,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 14),
-              role == "pembeli" ? SizedBox(
+              widget.role == "pembeli" ? SizedBox(
                 height: 180,
                 child: ListView(
                   scrollDirection: Axis.horizontal,

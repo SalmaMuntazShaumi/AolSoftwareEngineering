@@ -16,6 +16,62 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _obscurePassword = true;
+
+  void _login() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Email and password cannot be empty.')),
+      );
+      return;
+    }
+    setState(() => _isLoading = true);
+    try {
+      final result = await signIn(
+        _emailController.text,
+        _passwordController.text,
+        widget.role,
+      );
+
+      String userId = result['userId']?.toString() ??
+          result['sub']?.toString() ??
+          _emailController.text;
+      String? token = result['token']?.toString();
+
+      if (token == null || token.isEmpty) {
+        throw Exception('Token not found. Please try again.');
+      }
+
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CustomBottomNavBarPage(
+            role: widget.role,
+            userId: userId,
+            token: token,
+          ),
+        ),
+            (Route<dynamic> route) => false,
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Login Failed'),
+          content: Text('Email, password, or token is incorrect.\n$e'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,49 +116,36 @@ class _LoginPageState extends State<LoginPage> {
               SizedBox(height: 15),
               TextField(
                   controller: _passwordController,
+                  obscureText: _obscurePassword,
                   decoration: InputDecoration(
                       alignLabelWithHint: true,
                       label: Text('Kata Sandi'),
                       labelStyle: TextStyle(
-                          color: Colors.black.withOpacity(0.50), fontSize: 14)),
+                          color: Colors.black.withOpacity(0.50), fontSize: 14),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                          color: Colors.grey,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _obscurePassword = !_obscurePassword;
+                          });
+                        },
+                      )),
                   keyboardType: TextInputType.visiblePassword),
               SizedBox(height: 50),
               GestureDetector(
-                onTap: () async {
-                  try {
-                    await signIn(
-                      _emailController.text,
-                      _passwordController.text,
-                      widget.role,
-                    );
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(builder: (context) => CustomBottomNavBarPage(role: widget.role,)),
-                          (Route<dynamic> route) => false,
-                    );
-                  } catch (e) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('Login Failed'),
-                        content: Text('Email or password is incorrect.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: Text('OK'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-                },
+                onTap: _isLoading ? null : _login,
                 child: Container(
                     decoration: BoxDecoration(
                         color: Color(0xff1C1678),
                         borderRadius: BorderRadius.circular(100)),
                     height: 50,
                     child: Center(
-                        child: Text('Masuk',
+                        child: _isLoading
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text('Masuk',
                             style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.w600)))),
@@ -123,7 +166,8 @@ class _LoginPageState extends State<LoginPage> {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () => Navigator.of(context).push(
                               MaterialPageRoute(
-                                  builder: (context) => RegisterPage(role: widget.role,)))),
+                                  builder: (context) =>
+                                      RegisterPage(role: widget.role)))),
                   ]))
             ],
           ),
