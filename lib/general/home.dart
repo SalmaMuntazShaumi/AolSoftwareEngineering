@@ -1,6 +1,7 @@
 import 'package:compwaste/custom/article_card.dart';
 import 'package:compwaste/custom/emission_card.dart';
 import 'package:compwaste/general/notif.dart';
+import 'package:compwaste/general/products.dart';
 import 'package:compwaste/general/profile.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -338,9 +339,12 @@ class _HomePageState extends State<HomePage> {
   Widget _buildCategory(BuildContext context, String label, String assets, Color color, String categoryLabel) {
     return GestureDetector(
       onTap: () {
-        if (widget.onCategoryTap != null) {
-          widget.onCategoryTap!(categoryLabel);
-        }
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductPage(categoryLabel: categoryLabel),
+          ),
+        );
       },
       child: Column(
         mainAxisSize: MainAxisSize.max,

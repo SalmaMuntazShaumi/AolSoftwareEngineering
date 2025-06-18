@@ -23,8 +23,6 @@ class ProductCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        // height: 150,
-        width: 156,
         margin: const EdgeInsets.symmetric(vertical: 8),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -33,13 +31,21 @@ class ProductCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ClipRRect(
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
-              child: Image.network(
-                imagePath,
-                width: double.infinity,
-                height: 80,
-                fit: BoxFit.cover,
+            Flexible(
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                child: Image.network(
+                  imagePath,
+                  width: double.infinity,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Image.network(
+                      'https://inspektorat.palembang.go.id/assets/img/no-image.png',
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    );
+                  },
+                ),
               ),
             ),
             Padding(
@@ -65,7 +71,7 @@ class ProductCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        '\Rp$price',
+                        'Rp$price',
                         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                       ),
                       IconButton(

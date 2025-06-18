@@ -3,6 +3,7 @@ import 'package:compwaste/controller.dart';
 import 'package:compwaste/role_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../general/register_screen.dart';
 
 class LoginPage extends StatefulWidget {
@@ -34,14 +35,18 @@ class _LoginPageState extends State<LoginPage> {
         widget.role,
       );
 
+      if (result == null || result['token'] == null) {
+        throw Exception('Email or password is incorrect.');
+      }
+
       String userId = result['userId']?.toString() ??
           result['sub']?.toString() ??
           _emailController.text;
-      String? token = result['token']?.toString();
+      String token = result['token'].toString();
 
-      if (token == null || token.isEmpty) {
-        throw Exception('Token not found. Please try again.');
-      }
+      // Save token to SharedPreferences
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('access_token', token);
 
       Navigator.pushAndRemoveUntil(
         context,
@@ -59,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Login Failed'),
-          content: Text('Email, password, or token is incorrect.\n$e'),
+          content: Text('Email or password is incorrect.\n$e'),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 Future<Map<String, dynamic>> signUp(
     String email,
@@ -83,7 +84,12 @@ Future<Map<String, dynamic>> signIn(String email, String password, String role) 
       final response = await http.Response.fromStream(streamedResponse);
       print('Pembeli login response: ${response.statusCode} ${response.body}');
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return jsonDecode(response.body);
+        final data = jsonDecode(response.body);
+        // Normalize token key
+        if (data['access_token'] != null) {
+          data['token'] = data['access_token'];
+        }
+        return data;
       } else {
         throw Exception('Pembeli login failed: ${response.body}');
       }
@@ -112,6 +118,11 @@ Future<Map<String, dynamic>> signIn(String email, String password, String role) 
     print("Error during signIn: $e");
     rethrow;
   }
+}
+
+Future<void> saveAccessToken(String token) async {
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setString('access_token', token);
 }
 
 Future<void> saveUserData({
@@ -167,56 +178,6 @@ Future<void> registerToko({
 
   if (response.statusCode != 200 && response.statusCode != 201) {
     throw Exception('Failed to register toko: ${response.body}');
-  }
-}
-
-Future<void> submitProduct({
-  required String token,
-  required String nama,
-  required String kategori,
-  required String hargaBerat,
-  required String berat,
-  required String totalBarang,
-  required String totalBerat,
-  required String tanggalProduksi,
-  required String tanggalKadaluarsa,
-  required String kondisi,
-  required File foto,
-  required String deskripsi,
-  required String syaratKetentuan,
-  required String catatanTambahan,
-}) async {
-  final url = Uri.parse('https://compwaste.my.id/api/penjual/produk');
-  var request = http.MultipartRequest('POST', url);
-
-  // Set headers
-  request.headers['Authorization'] = 'Bearer $token';
-  request.headers['Accept'] = 'application/json';
-
-  // Add fields
-  request.fields['nama'] = nama;
-  request.fields['kategori'] = kategori;
-  request.fields['harga_berat'] = hargaBerat;
-  request.fields['berat'] = berat;
-  request.fields['total_barang'] = totalBarang;
-  request.fields['total_berat'] = totalBerat;
-  request.fields['tanggal_produksi'] = tanggalProduksi;
-  request.fields['tanggal_kadaluarsa'] = tanggalKadaluarsa;
-  request.fields['kondisi'] = kondisi;
-  request.fields['deskripsi'] = deskripsi;
-  request.fields['syarat_ketentuan'] = syaratKetentuan;
-  request.fields['catatan_tambahan'] = catatanTambahan;
-
-  // Add file
-  request.files.add(await http.MultipartFile.fromPath('foto', foto.path));
-
-  final streamedResponse = await request.send();
-  final response = await http.Response.fromStream(streamedResponse);
-
-  if (response.statusCode == 200 || response.statusCode == 201) {
-    print('Product created: ${response.body}');
-  } else {
-    throw Exception('Failed to create product: ${response.body}');
   }
 }
 
