@@ -117,7 +117,7 @@ class _HistoryCardState extends State<HistoryCard> {
                       child: const Text('Kirim', style: TextStyle(color: Colors.white)),
                     ),
                   )
-                else if (widget.role == "pembeli" && status == "dikirm")
+                else if (widget.role == "pembeli" && status == "dikirim")
                   Expanded(
                     child: ElevatedButton(
                       onPressed: widget.onSelesai,
