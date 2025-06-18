@@ -15,5 +15,4 @@ https://drive.google.com/drive/folders/1iGRVcjjmiFM1MbSnHr3Ior1GoS1dmsxW?usp=sha
 # VIDEO
 Link video to our project: https://drive.google.com/drive/folders/1WUtPHQX-FIvVz8bl6GkCxaDFyZ5Q0hPh
 
-#Link Hosting BE
-https://compwaste.my.id/
+Link Hosting BE: https://compwaste.my.id/
