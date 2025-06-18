@@ -50,14 +50,21 @@ class AuthController extends Controller
             'password' => bcrypt(request('password')),
             'alamat' => request('alamat'),
         ]);
-        if($user){
-             return response()->json([
-                'message' => 'User registered successfully',
-                'user' => $user,]);
+        if ($user) {
+        // Tambahkan saldo awal 5 juta setelah user berhasil dibuat
+        \App\Models\UserBalance::create([
+            'user_id' => $user->id,
+            'balance' => 10000000, // 5 juta
+            'total_berat_terbeli' => 0
+        ]);
+
+        return response()->json([
+            'message' => 'User registered successfully ',
+            'user' => $user,
+        ]);
+        } else {
+        return response()->json(['message' => 'User registration failed'], 500);
         }
-        else{
-            return response()->json(['message' => 'User registration failed'], 500);
-         }
     }
     /**
      * Get the authenticated User.
